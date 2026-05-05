@@ -1,0 +1,2253 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aurelia Kingdom — The Unknown Castle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════════════════════════════════
+   AURELIA KINGDOM — DESIGN SYSTEM
+   Aesthetic: Dark Gothic Castle RPG
+   Palette: Deep crimson, aged gold, stone grey, shadow black
+═══════════════════════════════════════════════ */
+:root {
+  --black:       #0a0608;
+  --void:        #110d0f;
+  --stone-deep:  #1a1318;
+  --stone:       #241b20;
+  --stone-mid:   #2e2228;
+  --stone-light: #3d2f36;
+  --dust:        #6b5560;
+  --ash:         #9b8890;
+  --pale:        #c8b8be;
+  --fog:         #e8dde0;
+
+  --crimson-deep: #5c0a1a;
+  --crimson:      #8b1a2a;
+  --crimson-mid:  #b52238;
+  --crimson-bright:#e02d4a;
+  --crimson-glow: #ff4466;
+
+  --gold-dark:   #5a3d00;
+  --gold:        #8c6200;
+  --gold-mid:    #c48a00;
+  --gold-bright: #f0b030;
+  --gold-pale:   #ffd97a;
+  --gold-shine:  #ffe9a0;
+
+  --omega-purple: #6b2d8b;
+  --omega-light:  #a855cc;
+  --alpha-teal:   #0d6b5c;
+  --alpha-light:  #1db89a;
+  --beta-blue:    #1a3a6b;
+  --beta-light:   #3a7acc;
+
+  --border: rgba(240,176,48,0.15);
+  --border-bright: rgba(240,176,48,0.4);
+  --glow-red: 0 0 20px rgba(176,30,50,0.4);
+  --glow-gold: 0 0 20px rgba(240,176,48,0.3);
+  --glow-strong: 0 0 40px rgba(176,30,50,0.6), 0 0 80px rgba(176,30,50,0.2);
+
+  --font-display: 'Cinzel', serif;
+  --font-body: 'Crimson Text', serif;
+  --font-ui: 'Rajdhani', sans-serif;
+
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  background: var(--black);
+  color: var(--pale);
+  font-family: var(--font-body);
+  font-size: 16px;
+  overflow: hidden;
+}
+
+/* ═══════════════ SCROLLBAR ═══════════════ */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--stone-deep); }
+::-webkit-scrollbar-thumb { background: var(--crimson); border-radius: 2px; }
+
+/* ═══════════════ SCREENS ═══════════════ */
+.screen {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  opacity: 0; pointer-events: none;
+  transition: var(--transition-slow);
+}
+.screen.active {
+  opacity: 1; pointer-events: all;
+}
+
+/* ═══════════════ LOADING SCREEN ═══════════════ */
+#screen-loading {
+  align-items: center; justify-content: center;
+  background: var(--black);
+}
+.loading-sigil {
+  width: 120px; height: 120px;
+  position: relative; margin-bottom: 32px;
+}
+.loading-sigil svg {
+  animation: sigil-spin 3s linear infinite;
+}
+.loading-title {
+  font-family: var(--font-display);
+  font-size: 14px; letter-spacing: 6px;
+  color: var(--gold-mid); text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.loading-subtitle {
+  font-family: var(--font-display);
+  font-size: 28px; letter-spacing: 2px;
+  color: var(--gold-bright);
+  text-shadow: var(--glow-gold);
+  margin-bottom: 40px;
+}
+.loading-bar-wrap {
+  width: 280px; height: 2px;
+  background: var(--stone-mid); border-radius: 1px; overflow: hidden;
+}
+.loading-bar {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--crimson), var(--gold-bright));
+  border-radius: 1px;
+  transition: width 0.4s ease;
+  box-shadow: 0 0 8px var(--crimson-bright);
+}
+.loading-text {
+  font-family: var(--font-ui);
+  font-size: 12px; letter-spacing: 3px;
+  color: var(--dust); margin-top: 16px;
+  text-transform: uppercase;
+}
+
+/* ═══════════════ AUTH SCREEN ═══════════════ */
+#screen-auth {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(139,26,42,0.25) 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 100%, rgba(90,61,0,0.2) 0%, transparent 50%),
+    var(--black);
+  align-items: center; justify-content: center;
+}
+.auth-castle-bg {
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect fill='%230a0608' width='800' height='600'/%3E%3Crect fill='%23110d0f' x='200' y='200' width='400' height='400'/%3E%3Crect fill='%231a1318' x='240' y='160' width='60' height='80'/%3E%3Crect fill='%231a1318' x='340' y='140' width='80' height='100'/%3E%3Crect fill='%231a1318' x='460' y='160' width='60' height='80'/%3E%3Crect fill='%23241b20' x='200' y='240' width='400' height='360'/%3E%3Crect fill='%23110d0f' x='340' y='340' width='80' height='100'/%3E%3Ccircle fill='%23f0b030' opacity='0.4' cx='380' cy='390' r='8'/%3E%3C/svg%3E");
+  background-size: cover; background-position: center;
+  opacity: 0.4; pointer-events: none;
+}
+.auth-box {
+  position: relative; z-index: 1;
+  width: 420px; max-width: 95vw;
+  background: rgba(26,19,24,0.95);
+  border: 1px solid var(--border-bright);
+  padding: 48px 40px;
+  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+  box-shadow: var(--glow-strong), inset 0 0 60px rgba(0,0,0,0.5);
+}
+.auth-box::before {
+  content: '';
+  position: absolute; inset: 1px;
+  background: linear-gradient(135deg, rgba(240,176,48,0.05) 0%, transparent 50%);
+  pointer-events: none;
+  clip-path: polygon(0 0, calc(100% - 19px) 0, 100% 19px, 100% 100%, 19px 100%, 0 calc(100% - 19px));
+}
+.auth-logo {
+  text-align: center; margin-bottom: 32px;
+}
+.auth-logo .kingdom {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 11px; letter-spacing: 6px;
+  color: var(--gold-mid); text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.auth-logo .title {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 26px; font-weight: 700; letter-spacing: 1px;
+  color: var(--gold-bright);
+  text-shadow: var(--glow-gold);
+}
+.auth-logo .subtitle {
+  display: block;
+  font-family: var(--font-body);
+  font-style: italic; font-size: 13px;
+  color: var(--dust); margin-top: 4px;
+}
+.auth-tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 28px;
+}
+.auth-tab {
+  flex: 1; padding: 10px;
+  font-family: var(--font-ui);
+  font-size: 12px; font-weight: 600;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--dust); cursor: pointer;
+  border: none; background: none;
+  border-bottom: 2px solid transparent;
+  transition: var(--transition);
+}
+.auth-tab.active {
+  color: var(--gold-bright);
+  border-bottom-color: var(--gold-bright);
+}
+.auth-tab:hover:not(.active) { color: var(--pale); }
+
+.form-group { margin-bottom: 18px; }
+.form-label {
+  display: block; margin-bottom: 6px;
+  font-family: var(--font-ui);
+  font-size: 11px; letter-spacing: 3px;
+  color: var(--dust); text-transform: uppercase;
+}
+.form-input {
+  width: 100%; padding: 12px 16px;
+  background: rgba(10,6,8,0.8);
+  border: 1px solid var(--border);
+  color: var(--pale);
+  font-family: var(--font-ui); font-size: 15px;
+  transition: var(--transition); outline: none;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+}
+.form-input:focus {
+  border-color: var(--gold-mid);
+  box-shadow: 0 0 0 1px var(--gold-mid), var(--glow-gold);
+  background: rgba(26,19,24,0.9);
+}
+.form-input::placeholder { color: var(--dust); opacity: 0.6; }
+
+.btn-primary {
+  width: 100%; padding: 14px;
+  background: linear-gradient(135deg, var(--crimson-deep), var(--crimson));
+  border: 1px solid var(--crimson-mid);
+  color: var(--gold-pale);
+  font-family: var(--font-ui); font-size: 13px;
+  font-weight: 700; letter-spacing: 4px; text-transform: uppercase;
+  cursor: pointer; transition: var(--transition); outline: none;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  position: relative; overflow: hidden;
+}
+.btn-primary::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, transparent, rgba(240,176,48,0.1));
+  opacity: 0; transition: var(--transition);
+}
+.btn-primary:hover { background: linear-gradient(135deg, var(--crimson), var(--crimson-mid)); box-shadow: var(--glow-red); }
+.btn-primary:hover::before { opacity: 1; }
+.btn-primary:active { transform: scale(0.98); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.auth-error {
+  margin-top: 14px; padding: 10px 14px;
+  background: rgba(139,26,42,0.3);
+  border: 1px solid var(--crimson);
+  color: var(--crimson-glow);
+  font-family: var(--font-ui); font-size: 13px;
+  display: none;
+}
+.auth-error.show { display: block; }
+
+.class-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 8px; margin-bottom: 18px;
+}
+.class-card {
+  padding: 10px 6px; text-align: center;
+  background: rgba(10,6,8,0.6);
+  border: 1px solid var(--border);
+  cursor: pointer; transition: var(--transition);
+  clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+}
+.class-card:hover { border-color: var(--gold-mid); background: rgba(90,61,0,0.2); }
+.class-card.selected { border-color: var(--gold-bright); background: rgba(90,61,0,0.35); }
+.class-icon { font-size: 20px; margin-bottom: 4px; }
+.class-name {
+  font-family: var(--font-ui); font-size: 10px;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--ash);
+}
+.class-card.selected .class-name { color: var(--gold-bright); }
+
+.rank-grid {
+  display: flex; gap: 8px; margin-bottom: 18px;
+}
+.rank-card {
+  flex: 1; padding: 10px 8px; text-align: center;
+  background: rgba(10,6,8,0.6);
+  border: 1px solid var(--border);
+  cursor: pointer; transition: var(--transition);
+  clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+}
+.rank-card[data-rank="alpha"] { border-color: rgba(13,107,92,0.3); }
+.rank-card[data-rank="beta"]  { border-color: rgba(26,58,107,0.3); }
+.rank-card[data-rank="omega"] { border-color: rgba(107,45,139,0.3); }
+.rank-card[data-rank="alpha"].selected { background: rgba(13,107,92,0.3); border-color: var(--alpha-light); }
+.rank-card[data-rank="beta"].selected  { background: rgba(26,58,107,0.3); border-color: var(--beta-light); }
+.rank-card[data-rank="omega"].selected { background: rgba(107,45,139,0.3); border-color: var(--omega-light); }
+.rank-label {
+  font-family: var(--font-display); font-size: 12px;
+  letter-spacing: 2px; text-transform: uppercase;
+}
+.rank-card[data-rank="alpha"] .rank-label { color: var(--alpha-light); }
+.rank-card[data-rank="beta"]  .rank-label { color: var(--beta-light); }
+.rank-card[data-rank="omega"] .rank-label { color: var(--omega-light); }
+.rank-desc {
+  font-family: var(--font-body); font-style: italic;
+  font-size: 11px; color: var(--dust); margin-top: 3px;
+}
+
+/* ═══════════════ MAIN GAME LAYOUT ═══════════════ */
+#screen-game {
+  flex-direction: row;
+  background: var(--void);
+}
+
+/* --- TOP BAR --- */
+#topbar {
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 54px;
+  background: rgba(10,6,8,0.95);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+  padding: 0 20px; gap: 16px; z-index: 100;
+  backdrop-filter: blur(8px);
+}
+.topbar-logo {
+  font-family: var(--font-display);
+  font-size: 14px; letter-spacing: 2px;
+  color: var(--gold-bright);
+  text-shadow: var(--glow-gold);
+  white-space: nowrap;
+}
+.topbar-stats {
+  display: flex; gap: 20px; flex: 1;
+  justify-content: center; align-items: center;
+}
+.stat-chip {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--font-ui); font-size: 13px;
+  font-weight: 600;
+}
+.stat-icon { font-size: 14px; }
+.stat-val { color: var(--gold-bright); }
+.stat-chip.hp .stat-val { color: #e05555; }
+.stat-chip.mp .stat-val { color: #5580e0; }
+.stat-chip.gold .stat-val { color: var(--gold-bright); }
+
+.hp-bar, .mp-bar {
+  width: 80px; height: 4px; border-radius: 2px;
+  background: var(--stone-mid); overflow: hidden;
+}
+.hp-fill { height: 100%; background: #e05555; border-radius: 2px; transition: var(--transition); }
+.mp-fill { height: 100%; background: #5580e0; border-radius: 2px; transition: var(--transition); }
+
+.topbar-rank {
+  font-family: var(--font-display); font-size: 11px;
+  letter-spacing: 2px; padding: 3px 10px;
+  border-radius: 2px; font-weight: 600;
+}
+.rank-alpha { background: rgba(13,107,92,0.3); color: var(--alpha-light); border: 1px solid var(--alpha-teal); }
+.rank-beta  { background: rgba(26,58,107,0.3); color: var(--beta-light);  border: 1px solid var(--beta-blue);  }
+.rank-omega { background: rgba(107,45,139,0.3); color: var(--omega-light); border: 1px solid var(--omega-purple); }
+.rank-unranked { background: rgba(107,85,96,0.3); color: var(--ash); border: 1px solid var(--dust); }
+
+.topbar-zone {
+  font-family: var(--font-ui); font-size: 11px;
+  letter-spacing: 2px; color: var(--dust);
+  text-transform: uppercase; margin-left: auto;
+}
+.btn-logout {
+  padding: 6px 14px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--dust);
+  font-family: var(--font-ui); font-size: 11px;
+  letter-spacing: 2px; text-transform: uppercase;
+  cursor: pointer; transition: var(--transition);
+}
+.btn-logout:hover { border-color: var(--crimson); color: var(--crimson-bright); }
+
+/* --- SIDEBAR NAV --- */
+#sidebar {
+  position: absolute; top: 54px; left: 0; bottom: 0;
+  width: 64px;
+  background: rgba(10,6,8,0.9);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  align-items: center; padding: 16px 0; gap: 4px;
+  z-index: 90;
+}
+.nav-btn {
+  width: 48px; height: 48px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 3px; cursor: pointer;
+  border: 1px solid transparent;
+  background: transparent; transition: var(--transition);
+  position: relative;
+}
+.nav-btn:hover { background: rgba(240,176,48,0.08); border-color: var(--border); }
+.nav-btn.active { background: rgba(139,26,42,0.3); border-color: var(--crimson); }
+.nav-icon { font-size: 18px; }
+.nav-label {
+  font-family: var(--font-ui); font-size: 8px;
+  letter-spacing: 1px; text-transform: uppercase;
+  color: var(--dust);
+}
+.nav-btn.active .nav-label { color: var(--gold-pale); }
+.nav-badge {
+  position: absolute; top: 4px; right: 4px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--crimson-bright);
+  font-family: var(--font-ui); font-size: 9px; font-weight: 700;
+  color: white; display: flex; align-items: center; justify-content: center;
+  display: none;
+}
+.nav-badge.show { display: flex; }
+
+.nav-divider {
+  width: 32px; height: 1px;
+  background: var(--border); margin: 4px 0;
+}
+
+/* --- MAIN CONTENT AREA --- */
+#main-content {
+  position: absolute;
+  top: 54px; left: 64px; right: 0; bottom: 0;
+  overflow: hidden;
+}
+
+/* --- PANEL BASE --- */
+.panel {
+  position: absolute; inset: 0;
+  display: none; flex-direction: column;
+  overflow: hidden;
+}
+.panel.active { display: flex; }
+
+.panel-header {
+  padding: 20px 28px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: baseline; gap: 16px;
+  background: rgba(10,6,8,0.4);
+  flex-shrink: 0;
+}
+.panel-title {
+  font-family: var(--font-display);
+  font-size: 18px; letter-spacing: 2px;
+  color: var(--gold-bright);
+}
+.panel-subtitle {
+  font-family: var(--font-body); font-style: italic;
+  font-size: 13px; color: var(--dust);
+}
+.panel-body {
+  flex: 1; overflow-y: auto; padding: 24px 28px;
+}
+
+/* ═══════════════ WORLD / CASTLE PANEL ═══════════════ */
+#zone-map {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 12px; max-width: 900px;
+}
+.zone-card {
+  padding: 20px; cursor: pointer;
+  background: rgba(10,6,8,0.6);
+  border: 1px solid var(--border);
+  transition: var(--transition);
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  position: relative; overflow: hidden;
+}
+.zone-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(240,176,48,0.05) 0%, transparent 60%);
+  opacity: 0; transition: var(--transition);
+}
+.zone-card:hover { border-color: var(--gold-mid); box-shadow: var(--glow-gold); }
+.zone-card:hover::before { opacity: 1; }
+.zone-card.current-zone {
+  border-color: var(--crimson-mid);
+  background: rgba(139,26,42,0.2);
+}
+.zone-card.current-zone::after {
+  content: 'YOU ARE HERE';
+  position: absolute; top: 8px; right: 8px;
+  font-family: var(--font-ui); font-size: 8px;
+  letter-spacing: 2px; color: var(--crimson-bright);
+  padding: 2px 6px; border: 1px solid var(--crimson);
+}
+.zone-icon { font-size: 28px; margin-bottom: 10px; display: block; }
+.zone-name {
+  font-family: var(--font-display); font-size: 14px;
+  letter-spacing: 1px; color: var(--gold-pale); margin-bottom: 6px;
+}
+.zone-desc {
+  font-family: var(--font-body); font-style: italic;
+  font-size: 13px; color: var(--dust); line-height: 1.5;
+}
+.zone-players {
+  margin-top: 10px; font-family: var(--font-ui);
+  font-size: 11px; color: var(--ash);
+  letter-spacing: 1px;
+}
+.zone-event {
+  margin-top: 6px; display: inline-block;
+  padding: 2px 8px;
+  background: rgba(224,45,74,0.2);
+  border: 1px solid var(--crimson);
+  font-family: var(--font-ui); font-size: 10px;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--crimson-bright);
+}
+
+/* NPC encounter modal */
+#npc-modal {
+  position: fixed; inset: 0;
+  background: rgba(5,3,5,0.85);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 200; opacity: 0; pointer-events: none;
+  transition: var(--transition-slow);
+  backdrop-filter: blur(4px);
+}
+#npc-modal.show { opacity: 1; pointer-events: all; }
+.npc-box {
+  width: 560px; max-width: 95vw;
+  background: var(--stone-deep);
+  border: 1px solid var(--border-bright);
+  clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 24px 100%, 0 calc(100% - 24px));
+  box-shadow: var(--glow-strong);
+  padding: 32px 36px; position: relative;
+  animation: modal-in 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+@keyframes modal-in {
+  from { transform: translateY(20px) scale(0.96); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+.npc-close {
+  position: absolute; top: 16px; right: 20px;
+  background: none; border: none; color: var(--dust);
+  font-size: 20px; cursor: pointer; transition: var(--transition);
+}
+.npc-close:hover { color: var(--crimson-bright); }
+.npc-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+.npc-avatar {
+  width: 60px; height: 60px;
+  background: var(--stone-mid);
+  border: 1px solid var(--border-bright);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+}
+.npc-name {
+  font-family: var(--font-display); font-size: 18px;
+  letter-spacing: 1px; color: var(--gold-bright); margin-bottom: 4px;
+}
+.npc-meta {
+  font-family: var(--font-ui); font-size: 11px;
+  letter-spacing: 2px; color: var(--dust); text-transform: uppercase;
+}
+.npc-dialogue-box {
+  background: rgba(10,6,8,0.6);
+  border: 1px solid var(--border);
+  padding: 16px 20px; margin-bottom: 20px;
+  min-height: 80px; position: relative;
+}
+.npc-dialogue-box::before {
+  content: '❝'; position: absolute; top: 8px; left: 10px;
+  font-size: 24px; color: var(--border-bright); line-height: 1;
+}
+.npc-dialogue {
+  font-family: var(--font-body); font-style: italic;
+  font-size: 16px; line-height: 1.7; color: var(--pale);
+  padding-left: 16px;
+}
+.npc-choices { display: flex; flex-direction: column; gap: 8px; }
+.npc-choice {
+  padding: 10px 16px;
+  background: rgba(26,19,24,0.8);
+  border: 1px solid var(--border); color: var(--pale);
+  font-family: var(--font-body); font-size: 15px;
+  cursor: pointer; transition: var(--transition); text-align: left;
+}
+.npc-choice:hover { border-color: var(--gold-mid); color: var(--gold-pale); background: rgba(90,61,0,0.2); }
+.npc-choice.quest { border-color: rgba(240,176,48,0.4); }
+.npc-choice.action { border-color: rgba(139,26,42,0.5); }
+
+/* ═══════════════ INVENTORY PANEL ═══════════════ */
+.inv-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+.inv-item {
+  padding: 16px; cursor: pointer;
+  background: rgba(10,6,8,0.5);
+  border: 1px solid var(--border);
+  transition: var(--transition);
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  position: relative;
+}
+.inv-item:hover { border-color: var(--gold-mid); background: rgba(26,19,24,0.8); }
+.inv-item.equipped { border-color: var(--crimson-mid); }
+.inv-item.locked { opacity: 0.7; }
+
+.item-rarity-bar {
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+}
+.rarity-common   { background: var(--ash); }
+.rarity-uncommon { background: #4CAF50; }
+.rarity-rare     { background: #2196F3; }
+.rarity-epic     { background: #9C27B0; }
+.rarity-legendary { background: linear-gradient(90deg, var(--gold-mid), var(--crimson-bright), var(--gold-mid)); }
+
+.item-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+.item-icon { font-size: 24px; }
+.item-badges { display: flex; gap: 4px; flex-direction: column; align-items: flex-end; }
+.item-badge {
+  font-family: var(--font-ui); font-size: 9px;
+  letter-spacing: 1px; padding: 2px 6px;
+  text-transform: uppercase;
+}
+.badge-equipped { background: rgba(139,26,42,0.4); color: var(--crimson-bright); border: 1px solid var(--crimson); }
+.badge-locked   { background: rgba(107,85,96,0.4); color: var(--ash); border: 1px solid var(--dust); }
+.badge-tradeable { background: rgba(90,61,0,0.4); color: var(--gold-mid); border: 1px solid var(--gold-dark); }
+
+.item-name {
+  font-family: var(--font-display); font-size: 13px;
+  letter-spacing: 1px; color: var(--gold-pale);
+  margin-bottom: 4px;
+}
+.item-type {
+  font-family: var(--font-ui); font-size: 10px;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--dust); margin-bottom: 6px;
+}
+.item-qty {
+  font-family: var(--font-ui); font-size: 12px;
+  color: var(--ash);
+}
+.item-actions { display: flex; gap: 6px; margin-top: 10px; }
+.item-btn {
+  flex: 1; padding: 5px;
+  background: transparent;
+  border: 1px solid var(--border); color: var(--dust);
+  font-family: var(--font-ui); font-size: 10px;
+  letter-spacing: 1px; text-transform: uppercase;
+  cursor: pointer; transition: var(--transition);
+}
+.item-btn:hover { border-color: var(--gold-mid); color: var(--gold-pale); }
+.item-btn.danger:hover { border-color: var(--crimson); color: var(--crimson-bright); }
+
+.inv-empty {
+  grid-column: 1 / -1; padding: 60px; text-align: center;
+  font-family: var(--font-body); font-style: italic;
+  font-size: 18px; color: var(--dust);
+}
+
+/* ═══════════════ TRADE PANEL ═══════════════ */
+.trade-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 900px; }
+.trade-section {
+  background: rgba(10,6,8,0.5);
+  border: 1px solid var(--border); padding: 20px;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+}
+.trade-section-title {
+  font-family: var(--font-display); font-size: 14px;
+  letter-spacing: 2px; color: var(--gold-mid);
+  margin-bottom: 16px; padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.trade-form-group { margin-bottom: 14px; }
+.trade-label {
+  display: block; margin-bottom: 6px;
+  font-family: var(--font-ui); font-size: 10px;
+  letter-spacing: 3px; text-transform: uppercase; color: var(--dust);
+}
+.trade-input {
+  width: 100%; padding: 10px 14px;
+  background: rgba(10,6,8,0.8);
+  border: 1px solid var(--border); color: var(--pale);
+  font-family: var(--font-ui); font-size: 14px;
+  transition: var(--transition); outline: none;
+}
+.trade-input:focus { border-color: var(--gold-mid); }
+
+.trade-history-item {
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.trade-history-item:last-child { border-bottom: none; }
+.th-info { font-family: var(--font-body); font-size: 14px; color: var(--pale); }
+.th-meta { font-family: var(--font-ui); font-size: 11px; color: var(--dust); }
+.th-status {
+  font-family: var(--font-ui); font-size: 10px;
+  letter-spacing: 2px; padding: 2px 8px;
+}
+.status-completed { color: #4CAF50; border: 1px solid rgba(76,175,80,0.5); }
+.status-pending   { color: var(--gold-mid); border: 1px solid rgba(196,138,0,0.5); }
+.status-failed    { color: var(--crimson-bright); border: 1px solid var(--crimson); }
+
+/* ═══════════════ SOCIAL / BONDS PANEL ═══════════════ */
+.bonds-list { display: flex; flex-direction: column; gap: 10px; max-width: 700px; }
+.bond-card {
+  padding: 16px 20px;
+  background: rgba(10,6,8,0.5);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; gap: 16px;
+  transition: var(--transition);
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+}
+.bond-card:hover { border-color: var(--gold-mid); }
+.bond-avatar {
+  width: 44px; height: 44px; flex-shrink: 0;
+  background: var(--stone-mid); border: 1px solid var(--border-bright);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-family: var(--font-display);
+  color: var(--gold-pale);
+}
+.bond-info { flex: 1; }
+.bond-name {
+  font-family: var(--font-display); font-size: 15px;
+  letter-spacing: 1px; color: var(--gold-pale); margin-bottom: 3px;
+}
+.bond-type {
+  font-family: var(--font-ui); font-size: 11px;
+  letter-spacing: 2px; text-transform: uppercase;
+}
+.bond-affinity-bar {
+  width: 80px; height: 4px; background: var(--stone-mid); border-radius: 2px; overflow: hidden;
+}
+.bond-affinity-fill {
+  height: 100%; border-radius: 2px; transition: var(--transition);
+}
+.affinity-positive { background: linear-gradient(90deg, var(--crimson), var(--gold-bright)); }
+.affinity-negative { background: var(--crimson-deep); }
+
+/* Bond type colors */
+.bond-mate    { color: var(--omega-light); }
+.bond-lover   { color: var(--crimson-bright); }
+.bond-ally    { color: var(--alpha-light); }
+.bond-rival   { color: var(--gold-mid); }
+.bond-enemy   { color: var(--crimson-glow); }
+.bond-friend  { color: var(--pale); }
+
+/* ═══════════════ QUESTS PANEL ═══════════════ */
+.quest-list { display: flex; flex-direction: column; gap: 12px; max-width: 800px; }
+.quest-card {
+  padding: 20px 24px;
+  background: rgba(10,6,8,0.5);
+  border: 1px solid var(--border);
+  transition: var(--transition);
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+}
+.quest-card.completed { border-color: rgba(76,175,80,0.4); }
+.quest-card.in_progress { border-color: var(--gold-dark); }
+.quest-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.quest-title {
+  font-family: var(--font-display); font-size: 15px;
+  letter-spacing: 1px; color: var(--gold-pale);
+}
+.quest-status-badge {
+  font-family: var(--font-ui); font-size: 10px;
+  letter-spacing: 2px; padding: 3px 8px;
+  text-transform: uppercase;
+}
+.quest-status-badge.in_progress { background: rgba(90,61,0,0.4); color: var(--gold-mid); border: 1px solid var(--gold-dark); }
+.quest-status-badge.completed   { background: rgba(76,175,80,0.2); color: #81C784; border: 1px solid rgba(76,175,80,0.5); }
+.quest-desc {
+  font-family: var(--font-body); font-style: italic;
+  font-size: 14px; color: var(--ash); line-height: 1.6; margin-bottom: 12px;
+}
+.quest-progress {
+  display: flex; gap: 12px; flex-wrap: wrap;
+}
+.quest-prog-item {
+  font-family: var(--font-ui); font-size: 11px;
+  color: var(--dust); letter-spacing: 1px;
+}
+.quest-prog-item span { color: var(--gold-bright); font-weight: 600; }
+.quest-reward {
+  margin-top: 10px; padding-top: 10px;
+  border-top: 1px solid var(--border);
+  display: flex; gap: 16px; align-items: center;
+}
+.quest-reward-label {
+  font-family: var(--font-ui); font-size: 10px;
+  letter-spacing: 2px; color: var(--dust); text-transform: uppercase;
+}
+.quest-reward-item {
+  font-family: var(--font-ui); font-size: 12px;
+  color: var(--gold-bright);
+}
+.btn-claim {
+  margin-left: auto; padding: 6px 16px;
+  background: rgba(139,26,42,0.4);
+  border: 1px solid var(--crimson-mid); color: var(--gold-pale);
+  font-family: var(--font-ui); font-size: 11px;
+  letter-spacing: 2px; text-transform: uppercase;
+  cursor: pointer; transition: var(--transition);
+}
+.btn-claim:hover { background: var(--crimson); box-shadow: var(--glow-red); }
+
+/* ═══════════════ PROFILE PANEL ═══════════════ */
+.profile-layout { display: grid; grid-template-columns: 280px 1fr; gap: 24px; max-width: 900px; }
+.profile-card {
+  padding: 24px;
+  background: rgba(10,6,8,0.5);
+  border: 1px solid var(--border-bright);
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+}
+.profile-avatar-large {
+  width: 80px; height: 80px; margin: 0 auto 16px;
+  background: linear-gradient(135deg, var(--crimson-deep), var(--stone-mid));
+  border: 2px solid var(--border-bright);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px; font-family: var(--font-display);
+  color: var(--gold-bright);
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+}
+.profile-username {
+  font-family: var(--font-display); font-size: 18px;
+  letter-spacing: 2px; color: var(--gold-bright);
+  text-align: center; margin-bottom: 4px;
+  text-shadow: var(--glow-gold);
+}
+.profile-class {
+  font-family: var(--font-ui); font-size: 11px;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--dust); text-align: center; margin-bottom: 16px;
+}
+.profile-stats { display: flex; flex-direction: column; gap: 10px; }
+.profile-stat-row { display: flex; justify-content: space-between; align-items: center; }
+.profile-stat-label { font-family: var(--font-ui); font-size: 11px; letter-spacing: 2px; color: var(--dust); text-transform: uppercase; }
+.profile-stat-value { font-family: var(--font-ui); font-size: 14px; font-weight: 600; color: var(--pale); }
+.profile-stat-value.gold { color: var(--gold-bright); }
+.exp-bar { height: 4px; background: var(--stone-mid); border-radius: 2px; overflow: hidden; margin-top: 4px; }
+.exp-fill { height: 100%; background: linear-gradient(90deg, var(--crimson), var(--gold-bright)); border-radius: 2px; }
+
+.profile-edit { display: flex; flex-direction: column; gap: 14px; }
+.edit-label {
+  font-family: var(--font-ui); font-size: 10px;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--dust); margin-bottom: 6px; display: block;
+}
+.edit-input {
+  width: 100%; padding: 10px 14px;
+  background: rgba(10,6,8,0.8);
+  border: 1px solid var(--border); color: var(--pale);
+  font-family: var(--font-body); font-size: 15px;
+  outline: none; transition: var(--transition);
+}
+.edit-input:focus { border-color: var(--gold-mid); }
+.edit-textarea {
+  resize: vertical; min-height: 100px; font-style: italic;
+}
+.btn-save {
+  padding: 12px 28px; align-self: flex-start;
+  background: rgba(90,61,0,0.4);
+  border: 1px solid var(--gold-mid); color: var(--gold-bright);
+  font-family: var(--font-ui); font-size: 12px;
+  letter-spacing: 3px; text-transform: uppercase;
+  cursor: pointer; transition: var(--transition);
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+}
+.btn-save:hover { background: var(--gold-dark); box-shadow: var(--glow-gold); }
+
+/* ═══════════════ TOAST NOTIFICATIONS ═══════════════ */
+#toast-container {
+  position: fixed; top: 70px; right: 20px;
+  z-index: 999; display: flex; flex-direction: column; gap: 8px;
+  pointer-events: none;
+}
+.toast {
+  padding: 12px 20px; min-width: 280px; max-width: 380px;
+  background: var(--stone-deep);
+  border-left: 3px solid var(--gold-bright);
+  font-family: var(--font-ui); font-size: 13px; letter-spacing: 1px;
+  color: var(--pale); opacity: 0;
+  animation: toast-in 0.4s forwards, toast-out 0.4s 3.5s forwards;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+}
+.toast.error { border-left-color: var(--crimson-bright); }
+.toast.success { border-left-color: #4CAF50; }
+@keyframes toast-in { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes toast-out { from { opacity: 1; } to { opacity: 0; transform: translateX(20px); } }
+
+/* ═══════════════ ANIMATIONS ═══════════════ */
+@keyframes sigil-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.7; }
+}
+@keyframes heat-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(107,45,139,0.4); }
+  50%       { box-shadow: 0 0 40px rgba(107,45,139,0.8), 0 0 80px rgba(107,45,139,0.3); }
+}
+.heat-active { animation: heat-pulse 2s ease-in-out infinite; }
+
+/* ═══════════════ SUPABASE CONFIG NOTICE ═══════════════ */
+#config-notice {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--black);
+  display: flex; align-items: center; justify-content: center;
+}
+.config-box {
+  width: 600px; max-width: 95vw; padding: 40px;
+  background: var(--stone-deep);
+  border: 1px solid var(--border-bright);
+  box-shadow: var(--glow-strong);
+  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+}
+.config-title {
+  font-family: var(--font-display); font-size: 20px;
+  letter-spacing: 2px; color: var(--gold-bright); margin-bottom: 8px;
+}
+.config-sub {
+  font-family: var(--font-body); font-style: italic;
+  color: var(--dust); margin-bottom: 24px; font-size: 14px;
+}
+.config-step {
+  margin-bottom: 16px; padding: 12px 16px;
+  background: rgba(10,6,8,0.6); border: 1px solid var(--border);
+}
+.config-step-num {
+  font-family: var(--font-display); font-size: 11px;
+  letter-spacing: 2px; color: var(--crimson-bright); margin-bottom: 4px;
+}
+.config-step-text {
+  font-family: var(--font-ui); font-size: 13px; color: var(--ash);
+}
+.config-step-text code {
+  font-family: monospace; color: var(--gold-pale);
+  background: rgba(0,0,0,0.4); padding: 2px 6px;
+  border-radius: 2px; font-size: 12px;
+}
+.config-inputs { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+.config-input {
+  width: 100%; padding: 12px 16px;
+  background: rgba(10,6,8,0.8);
+  border: 1px solid var(--border); color: var(--pale);
+  font-family: var(--font-ui); font-size: 13px; outline: none;
+}
+.config-input:focus { border-color: var(--gold-mid); }
+.btn-config {
+  margin-top: 16px; width: 100%; padding: 14px;
+  background: linear-gradient(135deg, var(--crimson-deep), var(--crimson));
+  border: 1px solid var(--crimson-mid); color: var(--gold-pale);
+  font-family: var(--font-ui); font-size: 13px;
+  font-weight: 700; letter-spacing: 4px; text-transform: uppercase;
+  cursor: pointer; transition: var(--transition);
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+}
+.btn-config:hover { background: linear-gradient(135deg, var(--crimson), var(--crimson-mid)); box-shadow: var(--glow-red); }
+
+/* Scrollbar track color for panel-body */
+.panel-body::-webkit-scrollbar-track { background: transparent; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ SUPABASE CONFIG SETUP ═══════════════ -->
+<div id="config-notice">
+  <div class="config-box">
+    <div class="config-title">⚔ Aurelia Kingdom Setup</div>
+    <div class="config-sub">Configure your Supabase connection to enter the Unknown Castle.</div>
+
+    <div class="config-step">
+      <div class="config-step-num">STEP 01 — DATABASE</div>
+      <div class="config-step-text">Run the SQL schema in your Supabase dashboard → SQL Editor. Copy from the <code>aurelia-schema.sql</code> file.</div>
+    </div>
+    <div class="config-step">
+      <div class="config-step-num">STEP 02 — PROJECT CREDENTIALS</div>
+      <div class="config-step-text">Get your URL and anon key from <code>Settings → API</code> in your Supabase dashboard.</div>
+    </div>
+    <div class="config-step">
+      <div class="config-step-num">STEP 03 — ENTER BELOW</div>
+      <div class="config-step-text">Credentials are saved locally in your browser.</div>
+    </div>
+
+    <div class="config-inputs">
+      <input class="config-input" id="cfg-url"  type="text" placeholder="https://YOUR_PROJECT.supabase.co" />
+      <input class="config-input" id="cfg-key"  type="text" placeholder="eyJhbGciOiJIUzI1Ni... (anon key)" />
+    </div>
+    <button class="btn-config" onclick="App.saveConfig()">Enter the Castle ⚔</button>
+  </div>
+</div>
+
+<!-- ═══════════════ LOADING SCREEN ═══════════════ -->
+<div id="screen-loading" class="screen">
+  <div class="loading-sigil">
+    <svg viewBox="0 0 120 120" width="120" height="120">
+      <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(240,176,48,0.2)" stroke-width="1"/>
+      <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(139,26,42,0.8)" stroke-width="1.5"
+        stroke-dasharray="80 260" stroke-linecap="round"/>
+      <circle cx="60" cy="60" r="40" fill="none" stroke="rgba(240,176,48,0.15)" stroke-width="0.5"/>
+      <circle cx="60" cy="60" r="40" fill="none" stroke="rgba(240,176,48,0.6)" stroke-width="1"
+        stroke-dasharray="50 200" stroke-linecap="round"/>
+      <path d="M60 20 L66 50 L80 44 L68 58 L80 76 L60 66 L40 76 L52 58 L40 44 L54 50 Z"
+        fill="none" stroke="rgba(240,176,48,0.5)" stroke-width="0.8" stroke-linejoin="round"/>
+      <circle cx="60" cy="60" r="6" fill="rgba(224,45,74,0.8)"/>
+    </svg>
+  </div>
+  <div class="loading-title">Aurelia Kingdom</div>
+  <div class="loading-subtitle">The Unknown Castle</div>
+  <div class="loading-bar-wrap">
+    <div class="loading-bar" id="loading-bar"></div>
+  </div>
+  <div class="loading-text" id="loading-text">Awakening the castle...</div>
+</div>
+
+<!-- ═══════════════ AUTH SCREEN ═══════════════ -->
+<div id="screen-auth" class="screen">
+  <div class="auth-castle-bg"></div>
+  <div class="auth-box">
+    <div class="auth-logo">
+      <span class="kingdom">Aurelia Kingdom</span>
+      <span class="title">The Unknown Castle</span>
+      <span class="subtitle">Enter if you dare, stranger.</span>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="UI.switchAuthTab('login')">Enter</button>
+      <button class="auth-tab" onclick="UI.switchAuthTab('register')">Begin Journey</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div id="form-login">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" id="login-email" type="email" placeholder="your@email.com" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" id="login-password" type="password" placeholder="••••••••" />
+      </div>
+      <button class="btn-primary" id="btn-login" onclick="Auth.login()">Enter the Castle</button>
+      <div class="auth-error" id="login-error"></div>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div id="form-register" style="display:none">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" id="reg-email" type="email" placeholder="your@email.com" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" id="reg-password" type="password" placeholder="Min. 8 characters" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input class="form-input" id="reg-username" type="text" placeholder="Letters, numbers, underscore" maxlength="24" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Choose Your Class</label>
+        <div class="class-grid" id="class-grid">
+          <div class="class-card selected" data-class="knight" onclick="UI.selectClass(this)">
+            <div class="class-icon">⚔️</div>
+            <div class="class-name">Knight</div>
+          </div>
+          <div class="class-card" data-class="mage" onclick="UI.selectClass(this)">
+            <div class="class-icon">🔮</div>
+            <div class="class-name">Mage</div>
+          </div>
+          <div class="class-card" data-class="rogue" onclick="UI.selectClass(this)">
+            <div class="class-icon">🗡️</div>
+            <div class="class-name">Rogue</div>
+          </div>
+          <div class="class-card" data-class="healer" onclick="UI.selectClass(this)">
+            <div class="class-icon">✨</div>
+            <div class="class-name">Healer</div>
+          </div>
+          <div class="class-card" data-class="bard" onclick="UI.selectClass(this)">
+            <div class="class-icon">🎵</div>
+            <div class="class-name">Bard</div>
+          </div>
+          <div class="class-card" data-class="ranger" onclick="UI.selectClass(this)">
+            <div class="class-icon">🏹</div>
+            <div class="class-name">Ranger</div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Choose Your Rank</label>
+        <div class="rank-grid">
+          <div class="rank-card selected" data-rank="alpha" onclick="UI.selectRank(this)">
+            <div class="rank-label">Alpha</div>
+            <div class="rank-desc">Dominant, commanding</div>
+          </div>
+          <div class="rank-card" data-rank="beta" onclick="UI.selectRank(this)">
+            <div class="rank-label">Beta</div>
+            <div class="rank-desc">Balanced, adaptable</div>
+          </div>
+          <div class="rank-card" data-rank="omega" onclick="UI.selectRank(this)">
+            <div class="rank-label">Omega</div>
+            <div class="rank-desc">Rare, powerful instinct</div>
+          </div>
+        </div>
+      </div>
+      <button class="btn-primary" id="btn-register" onclick="Auth.register()">Begin Your Journey</button>
+      <div class="auth-error" id="register-error"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ MAIN GAME SCREEN ═══════════════ -->
+<div id="screen-game" class="screen">
+
+  <!-- TOP BAR -->
+  <div id="topbar">
+    <div class="topbar-logo">⚔ AURELIA</div>
+    <div class="topbar-stats">
+      <div class="stat-chip hp">
+        <span class="stat-icon">❤</span>
+        <div class="hp-bar"><div class="hp-fill" id="hp-fill" style="width:100%"></div></div>
+        <span class="stat-val" id="stat-hp">100/100</span>
+      </div>
+      <div class="stat-chip mp">
+        <span class="stat-icon">◆</span>
+        <div class="mp-bar"><div class="mp-fill" id="mp-fill" style="width:100%"></div></div>
+        <span class="stat-val" id="stat-mp">50/50</span>
+      </div>
+      <div class="stat-chip gold">
+        <span class="stat-icon">◈</span>
+        <span class="stat-val" id="stat-gold">0</span>
+        <span style="font-family:var(--font-ui);font-size:10px;color:var(--dust);letter-spacing:2px">GOLD</span>
+      </div>
+      <div class="stat-chip">
+        <span class="stat-icon">✦</span>
+        <span class="stat-val" id="stat-level">Lv.1</span>
+      </div>
+      <div id="rank-badge" class="topbar-rank rank-unranked">UNRANKED</div>
+    </div>
+    <div class="topbar-zone" id="topbar-zone">⬡ CASTLE ENTRANCE</div>
+    <button class="btn-logout" onclick="Auth.logout()">⬡ Leave</button>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <button class="nav-btn active" data-panel="world" onclick="UI.openPanel('world')">
+      <span class="nav-icon">🏰</span>
+      <span class="nav-label">Castle</span>
+    </button>
+    <button class="nav-btn" data-panel="inventory" onclick="UI.openPanel('inventory')">
+      <span class="nav-icon">⚔</span>
+      <span class="nav-label">Items</span>
+    </button>
+    <button class="nav-btn" data-panel="trade" onclick="UI.openPanel('trade')">
+      <span class="nav-icon">⇌</span>
+      <span class="nav-label">Trade</span>
+      <div class="nav-badge" id="badge-trade"></div>
+    </button>
+    <div class="nav-divider"></div>
+    <button class="nav-btn" data-panel="quests" onclick="UI.openPanel('quests')">
+      <span class="nav-icon">📜</span>
+      <span class="nav-label">Quests</span>
+      <div class="nav-badge" id="badge-quests"></div>
+    </button>
+    <button class="nav-btn" data-panel="bonds" onclick="UI.openPanel('bonds')">
+      <span class="nav-icon">⛓</span>
+      <span class="nav-label">Bonds</span>
+    </button>
+    <div class="nav-divider"></div>
+    <button class="nav-btn" data-panel="profile" onclick="UI.openPanel('profile')">
+      <span class="nav-icon">◈</span>
+      <span class="nav-label">Profile</span>
+    </button>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div id="main-content">
+
+    <!-- WORLD PANEL -->
+    <div id="panel-world" class="panel active">
+      <div class="panel-header">
+        <div class="panel-title">The Unknown Castle</div>
+        <div class="panel-subtitle">Choose where to venture</div>
+      </div>
+      <div class="panel-body">
+        <div id="zone-map" class="zone-map"></div>
+      </div>
+    </div>
+
+    <!-- INVENTORY PANEL -->
+    <div id="panel-inventory" class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Inventory</div>
+        <div class="panel-subtitle" id="inv-count">0 items in your possession</div>
+      </div>
+      <div class="panel-body">
+        <div id="inv-grid" class="inv-grid"></div>
+      </div>
+    </div>
+
+    <!-- TRADE PANEL -->
+    <div id="panel-trade" class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Trade & Exchange</div>
+        <div class="panel-subtitle">Send items or gold to another soul</div>
+      </div>
+      <div class="panel-body">
+        <div class="trade-layout">
+          <div class="trade-section">
+            <div class="trade-section-title">⇒ Send to Player</div>
+            <div class="trade-form-group">
+              <label class="trade-label">Recipient Username</label>
+              <input class="trade-input" id="trade-to" type="text" placeholder="their_username" />
+            </div>
+            <div class="trade-form-group">
+              <label class="trade-label">Gold Amount</label>
+              <input class="trade-input" id="trade-gold" type="number" min="0" placeholder="0" />
+            </div>
+            <div class="trade-form-group">
+              <label class="trade-label">Item ID (from inventory)</label>
+              <input class="trade-input" id="trade-item-id" type="text" placeholder="Leave empty for gold-only" />
+            </div>
+            <div class="trade-form-group">
+              <label class="trade-label">Quantity</label>
+              <input class="trade-input" id="trade-qty" type="number" min="1" value="1" placeholder="1" />
+            </div>
+            <button class="btn-primary" onclick="Trade.send()" style="margin-top:8px">Send ⇒</button>
+          </div>
+          <div class="trade-section">
+            <div class="trade-section-title">⊞ Transaction History</div>
+            <div id="trade-history">
+              <div style="font-family:var(--font-body);font-style:italic;color:var(--dust);padding:20px 0">No transactions yet...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUESTS PANEL -->
+    <div id="panel-quests" class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Quests & Tasks</div>
+        <div class="panel-subtitle">Your journey through the castle</div>
+      </div>
+      <div class="panel-body">
+        <div id="quest-list" class="quest-list"></div>
+      </div>
+    </div>
+
+    <!-- BONDS PANEL -->
+    <div id="panel-bonds" class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Social Bonds</div>
+        <div class="panel-subtitle">Alliances, rivalries, and deeper ties</div>
+      </div>
+      <div class="panel-body">
+        <div id="bonds-list" class="bonds-list"></div>
+      </div>
+    </div>
+
+    <!-- PROFILE PANEL -->
+    <div id="panel-profile" class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Your Profile</div>
+        <div class="panel-subtitle">The tale of your existence</div>
+      </div>
+      <div class="panel-body">
+        <div class="profile-layout">
+          <div>
+            <div class="profile-card">
+              <div class="profile-avatar-large" id="profile-avatar">?</div>
+              <div class="profile-username" id="profile-username">Loading...</div>
+              <div class="profile-class" id="profile-class">Loading...</div>
+              <div class="profile-stats">
+                <div class="profile-stat-row">
+                  <span class="profile-stat-label">Level</span>
+                  <span class="profile-stat-value" id="prof-level">1</span>
+                </div>
+                <div>
+                  <div class="profile-stat-row">
+                    <span class="profile-stat-label">Experience</span>
+                    <span class="profile-stat-value" id="prof-exp">0 XP</span>
+                  </div>
+                  <div class="exp-bar" style="margin-top:6px"><div class="exp-fill" id="prof-exp-fill" style="width:0%"></div></div>
+                </div>
+                <div class="profile-stat-row">
+                  <span class="profile-stat-label">Gold</span>
+                  <span class="profile-stat-value gold" id="prof-gold">0</span>
+                </div>
+                <div class="profile-stat-row">
+                  <span class="profile-stat-label">Crystals</span>
+                  <span class="profile-stat-value" id="prof-crystals" style="color:#a855cc">0</span>
+                </div>
+                <div class="profile-stat-row">
+                  <span class="profile-stat-label">Zone</span>
+                  <span class="profile-stat-value" id="prof-zone" style="font-size:11px;letter-spacing:1px">—</span>
+                </div>
+                <div class="profile-stat-row">
+                  <span class="profile-stat-label">UID</span>
+                  <span class="profile-stat-value" id="prof-uid" style="font-size:9px;letter-spacing:1px;color:var(--dust)">—</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="profile-edit">
+            <div>
+              <label class="edit-label">Display Name</label>
+              <input class="edit-input" id="edit-display" type="text" maxlength="32" />
+            </div>
+            <div>
+              <label class="edit-label">Bio (max 500 chars)</label>
+              <textarea class="edit-input edit-textarea" id="edit-bio" maxlength="500"></textarea>
+            </div>
+            <button class="btn-save" onclick="Player.saveProfile()">Save Changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main-content -->
+</div><!-- /screen-game -->
+
+<!-- ═══════════════ NPC MODAL ═══════════════ -->
+<div id="npc-modal">
+  <div class="npc-box">
+    <button class="npc-close" onclick="UI.closeNPC()">✕</button>
+    <div class="npc-header">
+      <div class="npc-avatar" id="npc-avatar">?</div>
+      <div>
+        <div class="npc-name" id="npc-name">NPC</div>
+        <div class="npc-meta" id="npc-meta">Unknown · Castle Guard</div>
+      </div>
+    </div>
+    <div class="npc-dialogue-box">
+      <div class="npc-dialogue" id="npc-dialogue">...</div>
+    </div>
+    <div class="npc-choices" id="npc-choices"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ TOAST CONTAINER ═══════════════ -->
+<div id="toast-container"></div>
+
+<!-- ═══════════════ SCRIPTS ═══════════════ -->
+<script type="module">
+
+// ═══════════════════════════════════════════
+// CONFIG MANAGER
+// ═══════════════════════════════════════════
+const Config = {
+  get() {
+    return {
+      url: localStorage.getItem('ak_supabase_url') || '',
+      key: localStorage.getItem('ak_supabase_key') || '',
+    };
+  },
+  isSet() {
+    const c = this.get();
+    return c.url.startsWith('https://') && c.key.length > 20;
+  }
+};
+
+window.App = {
+  saveConfig() {
+    const url = document.getElementById('cfg-url').value.trim();
+    const key = document.getElementById('cfg-key').value.trim();
+    if (!url.startsWith('https://') || !key) {
+      alert('Please enter valid Supabase URL and anon key.');
+      return;
+    }
+    localStorage.setItem('ak_supabase_url', url);
+    localStorage.setItem('ak_supabase_key', key);
+    document.getElementById('config-notice').style.display = 'none';
+    location.reload();
+  }
+};
+
+// Pre-fill if exists
+const _cfg = Config.get();
+if (_cfg.url) document.getElementById('cfg-url').value = _cfg.url;
+if (_cfg.key) document.getElementById('cfg-key').value = _cfg.key;
+
+if (!Config.isSet()) {
+  // Show config screen, hide rest
+  document.getElementById('screen-loading').style.display = 'none';
+  // config-notice already visible
+  throw new Error('CONFIG_REQUIRED');
+}
+
+document.getElementById('config-notice').style.display = 'none';
+
+// ═══════════════════════════════════════════
+// SUPABASE INIT
+// ═══════════════════════════════════════════
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const { url: SB_URL, key: SB_KEY } = Config.get();
+const supabase = createClient(SB_URL, SB_KEY);
+
+// ═══════════════════════════════════════════
+// GAME STATE
+// ═══════════════════════════════════════════
+const State = {
+  user: null,       // auth user
+  player: null,     // players row
+  inventory: [],
+  quests: [],
+  bonds: [],
+  transactions: [],
+  selectedClass: 'knight',
+  selectedRank: 'alpha',
+  currentPanel: 'world',
+  realtimeChannel: null,
+};
+
+// ═══════════════════════════════════════════
+// WORLD DATA (static, could come from DB)
+// ═══════════════════════════════════════════
+const ZONES = [
+  { id: 'castle_entrance',  name: 'Castle Entrance',    icon: '🏰', desc: 'The grand gate of the Unknown Castle. Travelers gather here, seeking fortune or fate.', event: null },
+  { id: 'throne_room',      name: 'Throne Room',        icon: '👑', desc: 'The heart of power. An empty throne whispers of a missing ruler.', event: 'mystery_night' },
+  { id: 'shadow_corridors', name: 'Shadow Corridors',   icon: '🌑', desc: 'Dark passages where secrets and deals are made in whispers.', event: null },
+  { id: 'healers_sanctum',  name: "Healer's Sanctum",   icon: '✨', desc: 'A sacred space where wounds of body and spirit are mended.', event: null },
+  { id: 'merchants_hall',   name: "Merchant's Hall",    icon: '⚖',  desc: 'Rare goods from across the realm. Everything has a price here.', event: 'market_day' },
+  { id: 'dungeon_depths',   name: 'Dungeon Depths',     icon: '⛓',  desc: 'The lowest cells of the castle. Few enter. Fewer leave unchanged.', event: null },
+  { id: 'garden_of_oaths',  name: 'Garden of Oaths',   icon: '🌹', desc: 'Where bonds are formed under moonlight. Alphas claim mates here.', event: 'heat_moon' },
+  { id: 'armory',           name: 'Armory',             icon: '⚔',  desc: 'Rows upon rows of weapons forged by the castle smiths.', event: null },
+  { id: 'library_of_lost',  name: 'Library of Lost',   icon: '📜', desc: 'Ancient texts on omegaverse lore, alchemy, and forbidden arts.', event: null },
+];
+
+const NPCS = {
+  castle_entrance: [
+    { id: 'guard_theron', name: 'Theron', icon: '⚔', faction: 'Castle Guard', rank: 'alpha', desc: 'A stern Alpha guard who watches the gate.',
+      dialogues: [
+        { text: "Halt, stranger. State your purpose within these walls.", choices: [
+          { label: "I seek fortune and glory.", next: 1, type: 'normal' },
+          { label: "I'm just passing through.", next: 2, type: 'normal' },
+          { label: "[Quest] I heard there's a traitor in the castle.", next: 3, type: 'quest' },
+        ]},
+        { text: "Ha! Fortune? The Unknown Castle offers equal parts of treasure and terror. Mind yourself.", choices: [{ label: "I'll keep that in mind.", next: -1, type: 'normal' }] },
+        { text: "Passing through, are you? None simply pass through this castle, traveler.", choices: [{ label: "Perhaps you're right.", next: -1, type: 'normal' }] },
+        { text: "A traitor? Keep your voice down! If you truly know something, meet me at the Shadow Corridors at nightfall.", choices: [{ label: "I'll be there.", next: -1, type: 'quest' }] },
+      ]
+    },
+    { id: 'wanderer_lyra', name: 'Lyra', icon: '🌙', faction: 'Lone Wolf', rank: 'omega', desc: 'A mysterious Omega who seems to know more than she lets on.',
+      dialogues: [
+        { text: "You smell like someone who just arrived... and someone who will leave much changed.", choices: [
+          { label: "What do you mean?", next: 1, type: 'normal' },
+          { label: "[Bond] You're interesting.", next: 2, type: 'action' },
+        ]},
+        { text: "This castle has a way of peeling back your layers. By the time you leave — if you leave — you'll know exactly who you are.", choices: [{ label: "Thank you for the warning.", next: -1, type: 'normal' }] },
+        { text: "*She meets your gaze steadily.* Careful with that sentiment, stranger. Bonds made here run deeper than blood.", choices: [{ label: "I understand.", next: -1, type: 'action' }] },
+      ]
+    }
+  ],
+  throne_room: [
+    { id: 'chancellor_mors', name: 'Chancellor Mors', icon: '👑', faction: 'Shadow Court', rank: 'alpha', desc: 'The regent who rules in the king\'s absence.',
+      dialogues: [
+        { text: "The throne has been empty for seven years. I maintain order in His Majesty's absence. Do not mistake my courtesy for weakness.", choices: [
+          { label: "Who was the king?", next: 1, type: 'normal' },
+          { label: "[Quest] I can help find him.", next: 2, type: 'quest' },
+        ]},
+        { text: "King Aureus. The most powerful Alpha ever born to this realm. He disappeared the night of the Omega Convergence. We do not speak of it.", choices: [{ label: "Fascinating...", next: -1, type: 'normal' }] },
+        { text: "You would dare take on such a task? Very well. I'll be watching your progress closely.", choices: [{ label: "I won't fail.", next: -1, type: 'quest' }] },
+      ]
+    }
+  ],
+  healers_sanctum: [
+    { id: 'healer_senna', name: 'Sister Senna', icon: '✨', faction: 'Healer Order', rank: 'beta', desc: 'A gentle Beta healer with surprising depths.',
+      dialogues: [
+        { text: "Welcome. Are you hurt? The castle has a way of leaving marks on those who wander too freely.", choices: [
+          { label: "Please restore my health.", next: 1, type: 'action' },
+          { label: "I'm fine, just looking around.", next: 2, type: 'normal' },
+        ]},
+        { text: "*She places cool hands on your shoulder.* Be still. The magic will work its way through you...\n\n[HP Restored to Full]", choices: [{ label: "Thank you, Sister.", next: -1, type: 'action' }], onSelect: 'heal' },
+        { text: "Then look carefully. Every stone here has absorbed a century of prayer and pain.", choices: [{ label: "I believe it.", next: -1, type: 'normal' }] },
+      ]
+    }
+  ],
+};
+
+// ═══════════════════════════════════════════
+// UI CONTROLLER
+// ═══════════════════════════════════════════
+window.UI = {
+  switchAuthTab(tab) {
+    document.querySelectorAll('.auth-tab').forEach((t, i) => {
+      t.classList.toggle('active', (i === 0 && tab === 'login') || (i === 1 && tab === 'register'));
+    });
+    document.getElementById('form-login').style.display    = tab === 'login'    ? 'block' : 'none';
+    document.getElementById('form-register').style.display = tab === 'register' ? 'block' : 'none';
+  },
+
+  selectClass(el) {
+    document.querySelectorAll('.class-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    State.selectedClass = el.dataset.class;
+  },
+
+  selectRank(el) {
+    document.querySelectorAll('.rank-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    State.selectedRank = el.dataset.rank;
+  },
+
+  showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-' + id).classList.add('active');
+  },
+
+  openPanel(id) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+    document.querySelector(`.nav-btn[data-panel="${id}"]`).classList.add('active');
+    State.currentPanel = id;
+
+    // Lazy load panel data
+    if (id === 'inventory') Inventory.render();
+    if (id === 'trade')     Trade.loadHistory();
+    if (id === 'quests')    Quests.render();
+    if (id === 'bonds')     Bonds.render();
+    if (id === 'profile')   Player.renderProfile();
+    if (id === 'world')     World.render();
+  },
+
+  updateTopBar() {
+    const p = State.player;
+    if (!p) return;
+    const hpPct = Math.round((p.hp_current / p.hp_max) * 100);
+    const mpPct = Math.round((p.mp_current / p.mp_max) * 100);
+    document.getElementById('hp-fill').style.width = hpPct + '%';
+    document.getElementById('mp-fill').style.width = mpPct + '%';
+    document.getElementById('stat-hp').textContent  = `${p.hp_current}/${p.hp_max}`;
+    document.getElementById('stat-mp').textContent  = `${p.mp_current}/${p.mp_max}`;
+    document.getElementById('stat-gold').textContent = p.gold.toLocaleString();
+    document.getElementById('stat-level').textContent = 'Lv.' + p.level;
+    document.getElementById('topbar-zone').textContent = '⬡ ' + (p.current_zone || 'castle_entrance').replace(/_/g,' ').toUpperCase();
+
+    const rankEl = document.getElementById('rank-badge');
+    const rank = p.ov_rank || 'unranked';
+    rankEl.textContent = rank.toUpperCase();
+    rankEl.className = 'topbar-rank rank-' + rank;
+
+    if (p.ov_heat_cycle) rankEl.classList.add('heat-active');
+  },
+
+  toast(msg, type = 'info') {
+    const c = document.getElementById('toast-container');
+    const t = document.createElement('div');
+    t.className = 'toast ' + type;
+    t.textContent = msg;
+    c.appendChild(t);
+    setTimeout(() => t.remove(), 4500);
+  },
+
+  openNPC(npc, zoneId) {
+    const npcData = NPCS[zoneId]?.find(n => n.id === npc.id) || npc;
+    State.currentNPC = npcData;
+    State.npcDialogueIdx = 0;
+    document.getElementById('npc-avatar').textContent = npcData.icon || '?';
+    document.getElementById('npc-name').textContent   = npcData.name;
+    document.getElementById('npc-meta').textContent   = (npcData.rank || 'unknown').toUpperCase() + ' · ' + (npcData.faction || 'Unknown');
+    this._renderDialogue(npcData.dialogues[0]);
+    document.getElementById('npc-modal').classList.add('show');
+  },
+
+  _renderDialogue(dialogue) {
+    document.getElementById('npc-dialogue').textContent = dialogue.text;
+    const choicesEl = document.getElementById('npc-choices');
+    choicesEl.innerHTML = '';
+    dialogue.choices.forEach(ch => {
+      const btn = document.createElement('button');
+      btn.className = 'npc-choice ' + ch.type;
+      btn.textContent = ch.label;
+      btn.onclick = () => {
+        if (ch.onSelect === 'heal') this._triggerHeal();
+        if (ch.next === -1) { this.closeNPC(); return; }
+        const next = State.currentNPC.dialogues[ch.next];
+        if (next) this._renderDialogue(next);
+      };
+      choicesEl.appendChild(btn);
+    });
+  },
+
+  _triggerHeal() {
+    if (State.player) {
+      State.player.hp_current = State.player.hp_max;
+      State.player.mp_current = State.player.mp_max;
+      this.updateTopBar();
+      this.toast('✨ Your wounds are healed by Sister Senna.', 'success');
+    }
+  },
+
+  closeNPC() {
+    document.getElementById('npc-modal').classList.remove('show');
+    State.currentNPC = null;
+  },
+
+  setLoading(pct, text) {
+    document.getElementById('loading-bar').style.width = pct + '%';
+    document.getElementById('loading-text').textContent = text;
+  }
+};
+
+// ═══════════════════════════════════════════
+// WORLD
+// ═══════════════════════════════════════════
+window.World = {
+  render() {
+    const el = document.getElementById('zone-map');
+    const currentZone = State.player?.current_zone || 'castle_entrance';
+    el.innerHTML = ZONES.map(z => `
+      <div class="zone-card ${z.id === currentZone ? 'current-zone' : ''}" onclick="World.enter('${z.id}')">
+        <span class="zone-icon">${z.icon}</span>
+        <div class="zone-name">${z.name}</div>
+        <div class="zone-desc">${z.desc}</div>
+        <div class="zone-players">⬡ ${Math.floor(Math.random()*15)+1} souls present</div>
+        ${z.event ? `<div class="zone-event">${z.event.replace(/_/g,' ').toUpperCase()}</div>` : ''}
+      </div>
+    `).join('');
+  },
+
+  async enter(zoneId) {
+    if (!State.player) return;
+    const zone = ZONES.find(z => z.id === zoneId);
+    if (!zone) return;
+
+    // Update zone in DB
+    const { error } = await supabase
+      .from('players')
+      .update({ current_zone: zoneId })
+      .eq('uid', State.user.id);
+
+    if (error) { UI.toast('Failed to move zone: ' + error.message, 'error'); return; }
+
+    State.player.current_zone = zoneId;
+    UI.updateTopBar();
+    this.render();
+    UI.toast(`You entered: ${zone.name}`, 'info');
+
+    // Show NPCs in this zone
+    const npcsHere = NPCS[zoneId];
+    if (npcsHere && npcsHere.length > 0) {
+      setTimeout(() => {
+        UI.toast(`${npcsHere[0].name} is here. Click their portrait to speak.`, 'info');
+        // Open first NPC automatically on enter
+        UI.openNPC(npcsHere[0], zoneId);
+      }, 800);
+    }
+  }
+};
+
+// ═══════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════
+window.Auth = {
+async register() {
+    const email    = document.getElementById('reg-email').value.trim();
+    const pass     = document.getElementById('reg-password').value;
+    const username = document.getElementById('reg-username').value.trim();
+    const errEl    = document.getElementById('register-error');
+    const btn      = document.getElementById('btn-register');
+
+    errEl.classList.remove('show');
+
+    if (!/^[a-zA-Z0-9_]{3,24}$/.test(username)) {
+      errEl.textContent = 'Username: 3-24 chars, letters/numbers/underscore only.';
+      errEl.classList.add('show'); 
+      return;
+    }
+
+    if (pass.length < 8) {
+      errEl.textContent = 'Password must be at least 8 characters.';
+      errEl.classList.add('show');
+      return;
+    }
+
+    btn.disabled = true; 
+    btn.textContent = 'Forging your soul...';
+
+    try {
+      // Step 1: Register user auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({ 
+        email, 
+        password: pass,
+        options: {
+          data: {
+            username: username,
+            class: State.selectedClass,
+            ov_rank: State.selectedRank
+          }
+        }
+      });
+
+      if (authError) {
+        console.error('Auth Error:', authError);
+        btn.disabled = false; 
+        btn.textContent = 'Begin Your Journey';
+        
+        if (authError.message.includes('rate limit')) {
+          errEl.textContent = 'Too many attempts. Please wait a few minutes.';
+        } else if (authError.message.includes('already registered')) {
+          errEl.textContent = 'Email already registered. Try logging in.';
+        } else {
+          errEl.textContent = authError.message;
+        }
+        errEl.classList.add('show'); 
+        return;
+      }
+
+      console.log('Auth success:', authData);
+
+      // Step 2: Create player profile
+      if (authData.user) {
+        const { error: profileErr } = await supabase
+          .from('players')
+          .insert({
+            uid:          authData.user.id,
+            username:     username,
+            display_name: username,
+            class:        State.selectedClass,
+            ov_rank:      State.selectedRank,
+            hp_current:   100,
+            hp_max:       100,
+            mp_current:   50,
+            mp_max:       50,
+            current_zone: 'castle_entrance',
+            level:        1,
+            gold:         0,
+            crystals:     0,
+          });
+
+        if (profileErr) {
+          console.error('Profile Error:', profileErr);
+          // Hapus auth user karena profile gagal
+          await supabase.auth.signOut();
+          
+          btn.disabled = false; 
+          btn.textContent = 'Begin Your Journey';
+          errEl.textContent = 'Failed to create profile: ' + profileErr.message;
+          errEl.classList.add('show'); 
+          return;
+        }
+
+        console.log('Profile created successfully');
+        UI.toast('Welcome to the castle, ' + username + '!', 'success');
+        await App.initGame(authData.user);
+      }
+    } catch (err) {
+      console.error('Register Error:', err);
+      btn.disabled = false; 
+      btn.textContent = 'Begin Your Journey';
+      errEl.textContent = 'Something went wrong. Check console.';
+      errEl.classList.add('show');
+    }
+  },
+
+async login() {
+    const email = document.getElementById('login-email').value.trim();
+    const pass  = document.getElementById('login-password').value;
+    const errEl = document.getElementById('login-error');
+    const btn   = document.getElementById('btn-login');
+
+    errEl.classList.remove('show');
+    btn.disabled = true; 
+    btn.textContent = 'Opening gates...';
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ 
+        email, 
+        password: pass 
+      });
+
+      if (error) {
+        console.error('Login Error:', error);
+        btn.disabled = false; 
+        btn.textContent = 'Enter the Castle';
+        
+        if (error.message.includes('Invalid login')) {
+          errEl.textContent = 'Wrong email or password.';
+        } else if (error.message.includes('Email not confirmed')) {
+          errEl.textContent = 'Please confirm your email first.';
+        } else {
+          errEl.textContent = error.message;
+        }
+        errEl.classList.add('show'); 
+        return;
+      }
+
+      console.log('Login success:', data);
+      await App.initGame(data.user);
+      
+    } catch (err) {
+      console.error('Login Error:', err);
+      btn.disabled = false; 
+      btn.textContent = 'Enter the Castle';
+      errEl.textContent = 'Something went wrong.';
+      errEl.classList.add('show');
+    }
+  },
+
+  async logout() {
+    await supabase.auth.signOut();
+    State.user = null; State.player = null;
+    if (State.realtimeChannel) supabase.removeChannel(State.realtimeChannel);
+    UI.showScreen('auth');
+    UI.toast('You have left the castle.', 'info');
+  }
+};
+
+// ═══════════════════════════════════════════
+// PLAYER
+// ═══════════════════════════════════════════
+window.Player = {
+  async fetch() {
+    const { data, error } = await supabase
+      .from('players')
+      .select('*')
+      .eq('uid', State.user.id)
+      .single();
+    if (error) throw error;
+    State.player = data;
+    return data;
+  },
+
+  renderProfile() {
+    const p = State.player;
+    if (!p) return;
+    const initials = (p.display_name || p.username || '?').charAt(0).toUpperCase();
+    document.getElementById('profile-avatar').textContent   = initials;
+    document.getElementById('profile-username').textContent = p.username;
+    document.getElementById('profile-class').textContent    = (p.class || 'knight').toUpperCase() + ' · ' + (p.ov_rank || 'unranked').toUpperCase();
+    document.getElementById('prof-level').textContent    = p.level;
+    document.getElementById('prof-exp').textContent      = (p.exp || 0).toLocaleString() + ' XP';
+    document.getElementById('prof-exp-fill').style.width = Math.min(100, ((p.exp % 1000) / 1000) * 100) + '%';
+    document.getElementById('prof-gold').textContent     = (p.gold || 0).toLocaleString();
+    document.getElementById('prof-crystals').textContent = (p.crystals || 0).toLocaleString();
+    document.getElementById('prof-zone').textContent     = (p.current_zone || '').replace(/_/g,' ').toUpperCase();
+    document.getElementById('prof-uid').textContent      = p.uid;
+    document.getElementById('edit-display').value        = p.display_name || '';
+    document.getElementById('edit-bio').value            = p.profile_bio || '';
+  },
+
+  async saveProfile() {
+    const display_name = document.getElementById('edit-display').value.trim();
+    const profile_bio  = document.getElementById('edit-bio').value.trim();
+    if (!display_name) { UI.toast('Display name cannot be empty.', 'error'); return; }
+
+    const { error } = await supabase
+      .from('players')
+      .update({ display_name, profile_bio })
+      .eq('uid', State.user.id);
+
+    if (error) { UI.toast(error.message, 'error'); return; }
+    State.player.display_name = display_name;
+    State.player.profile_bio  = profile_bio;
+    UI.toast('Profile updated.', 'success');
+  }
+};
+
+// ═══════════════════════════════════════════
+// INVENTORY
+// ═══════════════════════════════════════════
+window.Inventory = {
+  ITEM_ICONS: {
+    weapon: '⚔', armor: '🛡', consumable: '⚗', quest_item: '📜',
+    key_item: '🗝', gift: '🌹', bond_token: '⛓', currency_pouch: '💰',
+  },
+
+  async fetch() {
+    const { data, error } = await supabase
+      .from('inventory')
+      .select(`inv_id, quantity, is_equipped, is_locked, slot, acquired_at,
+               items_catalog(item_id, name, description, item_type, rarity, base_value, is_tradeable, stats_json, icon_key)`)
+      .eq('player_uid', State.user.id)
+      .order('acquired_at', { ascending: false });
+    if (error) throw error;
+    State.inventory = data || [];
+    return State.inventory;
+  },
+
+  render() {
+    this.fetch().then(() => {
+      const grid = document.getElementById('inv-grid');
+      document.getElementById('inv-count').textContent = `${State.inventory.length} items in your possession`;
+      if (!State.inventory.length) {
+        grid.innerHTML = '<div class="inv-empty">Your satchel is empty. Venture into the castle to find items.</div>';
+        return;
+      }
+      grid.innerHTML = State.inventory.map(item => {
+        const cat = item.items_catalog || {};
+        const icon = this.ITEM_ICONS[cat.item_type] || '◈';
+        const rarity = cat.rarity || 'common';
+        return `
+          <div class="inv-item ${item.is_equipped ? 'equipped' : ''} ${item.is_locked ? 'locked' : ''}">
+            <div class="item-rarity-bar rarity-${rarity}"></div>
+            <div class="item-top">
+              <div class="item-icon">${icon}</div>
+              <div class="item-badges">
+                ${item.is_equipped ? '<span class="item-badge badge-equipped">Equipped</span>' : ''}
+                ${item.is_locked   ? '<span class="item-badge badge-locked">Locked</span>'   : ''}
+                ${cat.is_tradeable ? '<span class="item-badge badge-tradeable">Trade</span>'  : ''}
+              </div>
+            </div>
+            <div class="item-name">${cat.name || 'Unknown Item'}</div>
+            <div class="item-type">${rarity} ${cat.item_type || 'item'}</div>
+            <div class="item-qty">Qty: ${item.quantity} · Value: ${(cat.base_value || 0).toLocaleString()} gold</div>
+            <div class="item-actions">
+              <button class="item-btn" onclick="Inventory.toggleLock('${item.inv_id}', ${!item.is_locked})">
+                ${item.is_locked ? 'Unlock' : 'Lock'}
+              </button>
+              <button class="item-btn" onclick="Inventory.copyId('${cat.item_id}')">Copy ID</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    });
+  },
+
+  async toggleLock(invId, lock) {
+    const { error } = await supabase
+      .from('inventory')
+      .update({ is_locked: lock })
+      .eq('inv_id', invId)
+      .eq('player_uid', State.user.id);
+    if (error) { UI.toast(error.message, 'error'); return; }
+    UI.toast(lock ? 'Item locked.' : 'Item unlocked.', 'success');
+    this.render();
+  },
+
+  copyId(itemId) {
+    navigator.clipboard.writeText(itemId).catch(() => {});
+    UI.toast('Item ID copied to clipboard.', 'info');
+  }
+};
+
+// ═══════════════════════════════════════════
+// TRADE
+// ═══════════════════════════════════════════
+window.Trade = {
+  async send() {
+    const toUsername  = document.getElementById('trade-to').value.trim();
+    const goldAmount  = parseInt(document.getElementById('trade-gold').value) || 0;
+    const itemId      = document.getElementById('trade-item-id').value.trim();
+    const qty         = parseInt(document.getElementById('trade-qty').value) || 1;
+
+    if (!toUsername) { UI.toast('Enter recipient username.', 'error'); return; }
+
+    // Resolve recipient UID
+    const { data: recip, error: rErr } = await supabase
+      .from('players')
+      .select('uid, username')
+      .eq('username', toUsername)
+      .single();
+
+    if (rErr || !recip) { UI.toast('Player "' + toUsername + '" not found.', 'error'); return; }
+    if (recip.uid === State.user.id) { UI.toast('You cannot trade with yourself.', 'error'); return; }
+
+    const idempotencyKey = crypto.randomUUID();
+
+    // Call the transfer RPC
+    const { data, error } = await supabase.rpc('transfer_items', {
+      p_from_uid:        State.user.id,
+      p_to_uid:          recip.uid,
+      p_item_id:         itemId || null,
+      p_quantity:        itemId ? qty : 0,
+      p_gold_amount:     goldAmount,
+      p_reason:          'trade',
+      p_idempotency_key: idempotencyKey,
+    });
+
+    if (error) { UI.toast('Transfer failed: ' + error.message, 'error'); return; }
+    if (data?.status === 'error') { UI.toast('Transfer failed: ' + data.message, 'error'); return; }
+
+    UI.toast(`Transfer sent to ${toUsername} successfully.`, 'success');
+    document.getElementById('trade-gold').value = '';
+    document.getElementById('trade-item-id').value = '';
+    this.loadHistory();
+    if (State.player) State.player.gold -= goldAmount;
+    UI.updateTopBar();
+  },
+
+  async loadHistory() {
+    const { data, error } = await supabase
+      .from('transactions')
+      .select('*')
+      .or(`from_uid.eq.${State.user.id},to_uid.eq.${State.user.id}`)
+      .order('initiated_at', { ascending: false })
+      .limit(20);
+
+    const el = document.getElementById('trade-history');
+    if (error || !data?.length) {
+      el.innerHTML = '<div style="font-family:var(--font-body);font-style:italic;color:var(--dust);padding:20px 0">No transactions yet...</div>';
+      return;
+    }
+
+    State.transactions = data;
+    el.innerHTML = data.map(tx => {
+      const isOut = tx.from_uid === State.user.id;
+      const dir   = isOut ? '⇒ Sent' : '⇐ Received';
+      const dtStr = new Date(tx.initiated_at).toLocaleDateString();
+      let desc = tx.reason || 'trade';
+      if (tx.gold_amount > 0) desc += ` · ${tx.gold_amount.toLocaleString()} gold`;
+      return `
+        <div class="trade-history-item">
+          <div>
+            <div class="th-info">${dir} · ${desc}</div>
+            <div class="th-meta">${dtStr}</div>
+          </div>
+          <div class="th-status status-${tx.status}">${tx.status.toUpperCase()}</div>
+        </div>
+      `;
+    }).join('');
+  }
+};
+
+// ═══════════════════════════════════════════
+// QUESTS (uses local mock data + DB progress)
+// ═══════════════════════════════════════════
+const QUEST_CATALOG = [
+  {
+    key: 'gates_of_fate',
+    title: 'Gates of Fate',
+    desc: "Theron the gate guard suspects a traitor within the castle walls. Help him uncover the truth by visiting the Shadow Corridors.",
+    npc: 'Theron',
+    rewards: { gold: 500, exp: 200 },
+    steps: [{ label: 'Visit Shadow Corridors', target: 1 }, { label: 'Return to Theron', target: 1 }],
+  },
+  {
+    key: 'missing_king',
+    title: 'The Vanished King',
+    desc: "Chancellor Mors has tasked you with investigating the disappearance of King Aureus. Seek clues in the Library of Lost.",
+    npc: 'Chancellor Mors',
+    rewards: { gold: 2000, exp: 800 },
+    steps: [{ label: 'Read forbidden texts', target: 3 }, { label: 'Find the Omega Seal', target: 1 }],
+  },
+];
+
+window.Quests = {
+  async fetch() {
+    const { data } = await supabase
+      .from('quests')
+      .select('*')
+      .eq('player_uid', State.user.id);
+    State.quests = data || [];
+    return State.quests;
+  },
+
+  render() {
+    this.fetch().then(() => {
+      const el = document.getElementById('quest-list');
+      // Merge catalog with progress
+      const rendered = QUEST_CATALOG.map(q => {
+        const prog = State.quests.find(p => p.quest_key === q.key);
+        const status = prog?.status || 'not_started';
+        const canClaim = status === 'completed' && !prog?.reward_claimed;
+        return `
+          <div class="quest-card ${status}">
+            <div class="quest-header">
+              <div class="quest-title">${q.title}</div>
+              <span class="quest-status-badge ${status}">${status.replace(/_/g,' ').toUpperCase()}</span>
+            </div>
+            <div class="quest-desc">${q.desc}</div>
+            <div class="quest-progress">
+              ${q.steps.map((s, i) => {
+                const done = prog?.progress_json?.[i] || 0;
+                return `<div class="quest-prog-item">${s.label}: <span>${done}/${s.target}</span></div>`;
+              }).join('')}
+            </div>
+            <div class="quest-reward">
+              <span class="quest-reward-label">Reward</span>
+              <span class="quest-reward-item">◈ ${q.rewards.gold.toLocaleString()} Gold</span>
+              <span class="quest-reward-item">✦ ${q.rewards.exp.toLocaleString()} XP</span>
+              ${status === 'not_started' ? `<button class="btn-claim" onclick="Quests.start('${q.key}')">Accept Quest</button>` : ''}
+              ${canClaim ? `<button class="btn-claim" onclick="Quests.claim('${q.key}')">Claim Reward ✦</button>` : ''}
+            </div>
+          </div>
+        `;
+      });
+      el.innerHTML = rendered.join('') || '<div class="inv-empty">No quests found. Speak with NPCs in the castle.</div>';
+    });
+  },
+
+  async start(questKey) {
+    const { error } = await supabase.from('quests').insert({
+      player_uid: State.user.id,
+      quest_key: questKey,
+      status: 'in_progress',
+      started_at: new Date().toISOString(),
+      progress_json: {},
+    });
+    if (error) { UI.toast(error.message, 'error'); return; }
+    UI.toast('Quest accepted! Check your progress.', 'success');
+    this.render();
+  },
+
+  async claim(questKey) {
+    const { data, error } = await supabase.rpc('award_quest_reward', {
+      p_player_uid: State.user.id,
+      p_quest_key: questKey,
+      p_gold: QUEST_CATALOG.find(q => q.key === questKey)?.rewards.gold || 0,
+      p_exp:  QUEST_CATALOG.find(q => q.key === questKey)?.rewards.exp  || 0,
+    });
+    if (error) { UI.toast('Claim failed: ' + error.message, 'error'); return; }
+    UI.toast('Quest reward claimed!', 'success');
+    await Player.fetch();
+    UI.updateTopBar();
+    this.render();
+  }
+};
+
+// ═══════════════════════════════════════════
+// SOCIAL BONDS
+// ═══════════════════════════════════════════
+window.Bonds = {
+  BOND_ICONS: { mate: '💗', lover: '🔥', ally: '⚔', rival: '⚡', sworn_enemy: '💀', friend: '✦', acquaintance: '◈', stranger: '·' },
+
+  async fetch() {
+    const uid = State.user.id;
+    const { data } = await supabase
+      .from('social_bonds')
+      .select(`*, pa:players!social_bonds_player_a_fkey(uid,username,display_name,ov_rank),
+                   pb:players!social_bonds_player_b_fkey(uid,username,display_name,ov_rank)`)
+      .or(`player_a.eq.${uid},player_b.eq.${uid}`);
+    State.bonds = data || [];
+    return State.bonds;
+  },
+
+  render() {
+    this.fetch().then(() => {
+      const el = document.getElementById('bonds-list');
+      if (!State.bonds.length) {
+        el.innerHTML = '<div class="inv-empty" style="padding:40px">You have formed no bonds yet. Speak with others in the castle.</div>';
+        return;
+      }
+      const uid = State.user.id;
+      el.innerHTML = State.bonds.map(b => {
+        const other = b.player_a === uid ? b.pb : b.pa;
+        const name  = other?.display_name || other?.username || 'Unknown Soul';
+        const rank  = (other?.ov_rank || 'unranked').toUpperCase();
+        const icon  = this.BOND_ICONS[b.bond_type] || '◈';
+        const affinityPct = Math.max(0, ((b.affinity + 100) / 200) * 100);
+        const affClass = b.affinity >= 0 ? 'affinity-positive' : 'affinity-negative';
+        const bondClass = 'bond-' + b.bond_type.replace('sworn_enemy', 'enemy');
+        return `
+          <div class="bond-card">
+            <div class="bond-avatar">${name.charAt(0).toUpperCase()}</div>
+            <div class="bond-info">
+              <div class="bond-name">${name}</div>
+              <div class="bond-type ${bondClass}">${icon} ${b.bond_type.replace(/_/g,' ').toUpperCase()} · ${rank}</div>
+            </div>
+            <div>
+              <div style="font-family:var(--font-ui);font-size:10px;letter-spacing:1px;color:var(--dust);margin-bottom:4px">Affinity ${b.affinity > 0 ? '+' : ''}${b.affinity}</div>
+              <div class="bond-affinity-bar">
+                <div class="bond-affinity-fill ${affClass}" style="width:${affinityPct}%"></div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    });
+  }
+};
+
+// ═══════════════════════════════════════════
+// REALTIME: subscribe to world events
+// ═══════════════════════════════════════════
+function initRealtime() {
+  const zone = State.player?.current_zone || 'castle_entrance';
+  State.realtimeChannel = supabase
+    .channel(`zone:${zone}`)
+    .on('broadcast', { event: 'player_entered' }, ({ payload }) => {
+      if (payload?.username !== State.player?.username) {
+        UI.toast(`${payload.username} entered the castle.`, 'info');
+      }
+    })
+    .on('postgres_changes', {
+      event: 'UPDATE', schema: 'public',
+      table: 'players', filter: `uid=eq.${State.user.id}`
+    }, ({ new: updated }) => {
+      State.player = { ...State.player, ...updated };
+      UI.updateTopBar();
+    })
+    .subscribe();
+
+  // Broadcast your presence
+  State.realtimeChannel.send({
+    type: 'broadcast',
+    event: 'player_entered',
+    payload: { username: State.player?.username, class: State.player?.class }
+  });
+}
+
+// ═══════════════════════════════════════════
+// APP INIT
+// ═══════════════════════════════════════════
+window.App = window.App || {};
+
+window.App.initGame = async function(user) {
+  State.user = user;
+  UI.showScreen('loading');
+
+  try {
+    UI.setLoading(20, 'Binding your soul...');
+    await Player.fetch();
+    UI.setLoading(50, 'Mapping the castle...');
+    await Inventory.fetch();
+    UI.setLoading(70, 'Reading the stars...');
+    UI.setLoading(90, 'Awakening the realm...');
+    initRealtime();
+    UI.updateTopBar();
+    UI.setLoading(100, 'Enter the Unknown Castle...');
+
+    setTimeout(() => {
+      UI.showScreen('game');
+      World.render();
+      UI.toast(`Welcome back, ${State.player.display_name || State.player.username}.`, 'success');
+    }, 600);
+
+  } catch (e) {
+    UI.toast('Failed to load: ' + e.message, 'error');
+    UI.showScreen('auth');
+  }
+};
+
+// ═══════════════════════════════════════════
+// BOOTSTRAP: check session on load
+// ═══════════════════════════════════════════
+async function bootstrap() {
+  UI.showScreen('loading');
+  UI.setLoading(10, 'Awakening the castle...');
+
+  const { data: { session } } = await supabase.auth.getSession();
+
+  if (session?.user) {
+    await App.initGame(session.user);
+  } else {
+    UI.showScreen('auth');
+  }
+
+  // Listen for auth state changes
+  supabase.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_OUT') {
+      UI.showScreen('auth');
+    }
+  });
+}
+
+bootstrap();
+</script>
+</body>
+</html>
