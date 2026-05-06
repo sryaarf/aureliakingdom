@@ -117,13 +117,16 @@ html, body { width: 100%; height: 100%; background: var(--black); color: var(--p
 .rank-card[data-rank="alpha"] { border-color: rgba(13,107,92,0.3); }
 .rank-card[data-rank="beta"]  { border-color: rgba(26,58,107,0.3); }
 .rank-card[data-rank="omega"] { border-color: rgba(107,45,139,0.3); }
+.rank-card[data-rank="enigma"] { border-color: rgba(146,33,46,0.3); }
 .rank-card[data-rank="alpha"].selected { background: rgba(13,107,92,0.3); border-color: var(--alpha-light); }
 .rank-card[data-rank="beta"].selected  { background: rgba(26,58,107,0.3); border-color: var(--beta-light); }
 .rank-card[data-rank="omega"].selected { background: rgba(107,45,139,0.3); border-color: var(--omega-light); }
+.rank-card[data-rank="enigma"].selected { background: rgba(146,33,46,0.3); border-color: var(--enigma-light); }
 .rank-label { font-family: var(--font-display); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; }
 .rank-card[data-rank="alpha"] .rank-label { color: var(--alpha-light); }
 .rank-card[data-rank="beta"]  .rank-label { color: var(--beta-light); }
 .rank-card[data-rank="omega"] .rank-label { color: var(--omega-light); }
+.rank-card[data-rank="enigma"] .rank-label { color: var(--enigma-light); }
 .rank-desc { font-family: var(--font-body); font-style: italic; font-size: 11px; color: var(--dust); margin-top: 3px; }
 
 /* ─── GAME LAYOUT ─── */
@@ -143,6 +146,7 @@ html, body { width: 100%; height: 100%; background: var(--black); color: var(--p
 .rank-alpha { background: rgba(13,107,92,0.3); color: var(--alpha-light); border: 1px solid var(--alpha-teal); }
 .rank-beta  { background: rgba(26,58,107,0.3); color: var(--beta-light);  border: 1px solid var(--beta-blue);  }
 .rank-omega { background: rgba(107,45,139,0.3); color: var(--omega-light); border: 1px solid var(--omega-purple); }
+.rank-enigma { background: rgba(146,33,46,0.3); color: var(--enigma-light); border: 1px solid var(--enigma-purple); }
 .rank-unranked { background: rgba(107,85,96,0.3); color: var(--ash); border: 1px solid var(--dust); }
 .topbar-zone { font-family: var(--font-ui); font-size: 10px; letter-spacing: 2px; color: var(--dust); text-transform: uppercase; }
 .btn-logout { padding: 5px 12px; background: transparent; border: 1px solid var(--border); color: var(--dust); font-family: var(--font-ui); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: var(--transition); flex-shrink: 0; }
@@ -434,7 +438,7 @@ html, body { width: 100%; height: 100%; background: var(--black); color: var(--p
 <!-- ═══════════ GAME SCREEN ═══════════ -->
 <div id="screen-game" class="screen">
   <div id="topbar">
-    <div class="topbar-logo">⚔ AURELIA</div>
+    <div class="topbar-logo">⚔ AURELIA KINGDOM</div>
     <div class="topbar-stats">
       <div class="stat-chip hp">
         <span class="stat-icon">❤</span>
