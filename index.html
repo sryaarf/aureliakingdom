@@ -1,0 +1,1609 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aurelia Kingdom — The Unknown Castle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black:       #0a0608;
+  --void:        #110d0f;
+  --stone-deep:  #1a1318;
+  --stone:       #241b20;
+  --stone-mid:   #2e2228;
+  --stone-light: #3d2f36;
+  --dust:        #6b5560;
+  --ash:         #9b8890;
+  --pale:        #c8b8be;
+  --fog:         #e8dde0;
+  --crimson-deep:  #5c0a1a;
+  --crimson:       #8b1a2a;
+  --crimson-mid:   #b52238;
+  --crimson-bright:#e02d4a;
+  --crimson-glow:  #ff4466;
+  --gold-dark:   #5a3d00;
+  --gold:        #8c6200;
+  --gold-mid:    #c48a00;
+  --gold-bright: #f0b030;
+  --gold-pale:   #ffd97a;
+  --gold-shine:  #ffe9a0;
+  --omega-purple: #6b2d8b;
+  --omega-light:  #a855cc;
+  --alpha-teal:   #0d6b5c;
+  --alpha-light:  #1db89a;
+  --beta-blue:    #1a3a6b;
+  --beta-light:   #3a7acc;
+  --border:        rgba(240,176,48,0.15);
+  --border-bright: rgba(240,176,48,0.4);
+  --glow-red:    0 0 20px rgba(176,30,50,0.4);
+  --glow-gold:   0 0 20px rgba(240,176,48,0.3);
+  --glow-strong: 0 0 40px rgba(176,30,50,0.6), 0 0 80px rgba(176,30,50,0.2);
+  --font-display: 'Cinzel', serif;
+  --font-body:    'Crimson Text', serif;
+  --font-ui:      'Rajdhani', sans-serif;
+  --transition:      all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; background: var(--black); color: var(--pale); font-family: var(--font-body); font-size: 16px; overflow: hidden; }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--stone-deep); }
+::-webkit-scrollbar-thumb { background: var(--crimson); border-radius: 2px; }
+
+/* ─── SCREENS ─── */
+.screen { position: absolute; inset: 0; display: flex; flex-direction: column; opacity: 0; pointer-events: none; transition: var(--transition-slow); }
+.screen.active { opacity: 1; pointer-events: all; }
+
+/* ─── CONFIG NOTICE ─── */
+#config-notice { position: fixed; inset: 0; z-index: 9999; background: var(--black); display: none; align-items: center; justify-content: center; }
+#config-notice.show { display: flex; }
+.config-box { width: 600px; max-width: 95vw; padding: 40px; background: var(--stone-deep); border: 1px solid var(--border-bright); box-shadow: var(--glow-strong); clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px)); }
+.config-title { font-family: var(--font-display); font-size: 20px; letter-spacing: 2px; color: var(--gold-bright); margin-bottom: 8px; }
+.config-sub { font-family: var(--font-body); font-style: italic; color: var(--dust); margin-bottom: 24px; font-size: 14px; }
+.config-step { margin-bottom: 16px; padding: 12px 16px; background: rgba(10,6,8,0.6); border: 1px solid var(--border); }
+.config-step-num { font-family: var(--font-display); font-size: 11px; letter-spacing: 2px; color: var(--crimson-bright); margin-bottom: 4px; }
+.config-step-text { font-family: var(--font-ui); font-size: 13px; color: var(--ash); }
+.config-step-text code { font-family: monospace; color: var(--gold-pale); background: rgba(0,0,0,0.4); padding: 2px 6px; border-radius: 2px; font-size: 12px; }
+.config-inputs { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+.config-input { width: 100%; padding: 12px 16px; background: rgba(10,6,8,0.8); border: 1px solid var(--border); color: var(--pale); font-family: var(--font-ui); font-size: 13px; outline: none; }
+.config-input:focus { border-color: var(--gold-mid); }
+
+/* ─── LOADING ─── */
+#screen-loading { align-items: center; justify-content: center; background: var(--black); }
+.loading-sigil { width: 120px; height: 120px; margin-bottom: 32px; }
+.loading-sigil svg { animation: sigil-spin 3s linear infinite; }
+.loading-title { font-family: var(--font-display); font-size: 14px; letter-spacing: 6px; color: var(--gold-mid); text-transform: uppercase; margin-bottom: 8px; }
+.loading-subtitle { font-family: var(--font-display); font-size: 28px; letter-spacing: 2px; color: var(--gold-bright); text-shadow: var(--glow-gold); margin-bottom: 40px; }
+.loading-bar-wrap { width: 280px; height: 2px; background: var(--stone-mid); border-radius: 1px; overflow: hidden; }
+.loading-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--crimson), var(--gold-bright)); border-radius: 1px; transition: width 0.4s ease; box-shadow: 0 0 8px var(--crimson-bright); }
+.loading-text { font-family: var(--font-ui); font-size: 12px; letter-spacing: 3px; color: var(--dust); margin-top: 16px; text-transform: uppercase; }
+
+/* ─── AUTH ─── */
+#screen-auth { background: radial-gradient(ellipse at 50% 0%, rgba(139,26,42,0.25) 0%, transparent 60%), radial-gradient(ellipse at 50% 100%, rgba(90,61,0,0.2) 0%, transparent 50%), var(--black); align-items: center; justify-content: center; overflow-y: auto; }
+.auth-castle-bg { position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect fill='%230a0608' width='800' height='600'/%3E%3Crect fill='%23110d0f' x='200' y='200' width='400' height='400'/%3E%3Crect fill='%231a1318' x='240' y='160' width='60' height='80'/%3E%3Crect fill='%231a1318' x='340' y='140' width='80' height='100'/%3E%3Crect fill='%231a1318' x='460' y='160' width='60' height='80'/%3E%3Crect fill='%23241b20' x='200' y='240' width='400' height='360'/%3E%3Crect fill='%23110d0f' x='340' y='340' width='80' height='100'/%3E%3Ccircle fill='%23f0b030' opacity='0.4' cx='380' cy='390' r='8'/%3E%3C/svg%3E"); background-size: cover; background-position: center; opacity: 0.4; pointer-events: none; }
+.auth-box { position: relative; z-index: 1; width: 440px; max-width: 95vw; background: rgba(26,19,24,0.97); border: 1px solid var(--border-bright); padding: 40px 36px; clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px)); box-shadow: var(--glow-strong), inset 0 0 60px rgba(0,0,0,0.5); margin: 20px 0; }
+.auth-logo { text-align: center; margin-bottom: 28px; }
+.auth-logo .kingdom { display: block; font-family: var(--font-display); font-size: 11px; letter-spacing: 6px; color: var(--gold-mid); text-transform: uppercase; margin-bottom: 4px; }
+.auth-logo .title { display: block; font-family: var(--font-display); font-size: 24px; font-weight: 700; letter-spacing: 1px; color: var(--gold-bright); text-shadow: var(--glow-gold); }
+.auth-logo .subtitle { display: block; font-family: var(--font-body); font-style: italic; font-size: 13px; color: var(--dust); margin-top: 4px; }
+.auth-tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+.auth-tab { flex: 1; padding: 10px; font-family: var(--font-ui); font-size: 12px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--dust); cursor: pointer; border: none; background: none; border-bottom: 2px solid transparent; transition: var(--transition); }
+.auth-tab.active { color: var(--gold-bright); border-bottom-color: var(--gold-bright); }
+.auth-tab:hover:not(.active) { color: var(--pale); }
+.form-group { margin-bottom: 16px; }
+.form-label { display: block; margin-bottom: 6px; font-family: var(--font-ui); font-size: 11px; letter-spacing: 3px; color: var(--dust); text-transform: uppercase; }
+.form-input { width: 100%; padding: 11px 14px; background: rgba(10,6,8,0.8); border: 1px solid var(--border); color: var(--pale); font-family: var(--font-ui); font-size: 14px; transition: var(--transition); outline: none; clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); }
+.form-input:focus { border-color: var(--gold-mid); box-shadow: 0 0 0 1px var(--gold-mid), var(--glow-gold); background: rgba(26,19,24,0.9); }
+.form-input::placeholder { color: var(--dust); opacity: 0.6; }
+.btn-primary { width: 100%; padding: 13px; background: linear-gradient(135deg, var(--crimson-deep), var(--crimson)); border: 1px solid var(--crimson-mid); color: var(--gold-pale); font-family: var(--font-ui); font-size: 13px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; cursor: pointer; transition: var(--transition); outline: none; clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px)); position: relative; overflow: hidden; }
+.btn-primary:hover { background: linear-gradient(135deg, var(--crimson), var(--crimson-mid)); box-shadow: var(--glow-red); }
+.btn-primary:active { transform: scale(0.98); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.auth-error { margin-top: 12px; padding: 10px 14px; background: rgba(139,26,42,0.3); border: 1px solid var(--crimson); color: var(--crimson-glow); font-family: var(--font-ui); font-size: 12px; display: none; line-height: 1.5; }
+.auth-error.show { display: block; }
+.auth-info { margin-top: 12px; padding: 10px 14px; background: rgba(13,107,92,0.2); border: 1px solid var(--alpha-teal); color: var(--alpha-light); font-family: var(--font-ui); font-size: 12px; display: none; line-height: 1.5; }
+.auth-info.show { display: block; }
+.class-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+.class-card { padding: 10px 6px; text-align: center; background: rgba(10,6,8,0.6); border: 1px solid var(--border); cursor: pointer; transition: var(--transition); clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px)); }
+.class-card:hover { border-color: var(--gold-mid); background: rgba(90,61,0,0.2); }
+.class-card.selected { border-color: var(--gold-bright); background: rgba(90,61,0,0.35); }
+.class-icon { font-size: 20px; margin-bottom: 4px; }
+.class-name { font-family: var(--font-ui); font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ash); }
+.class-card.selected .class-name { color: var(--gold-bright); }
+.rank-grid { display: flex; gap: 8px; margin-bottom: 16px; }
+.rank-card { flex: 1; padding: 10px 6px; text-align: center; background: rgba(10,6,8,0.6); border: 1px solid var(--border); cursor: pointer; transition: var(--transition); clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px)); }
+.rank-card[data-rank="alpha"] { border-color: rgba(13,107,92,0.3); }
+.rank-card[data-rank="beta"]  { border-color: rgba(26,58,107,0.3); }
+.rank-card[data-rank="omega"] { border-color: rgba(107,45,139,0.3); }
+.rank-card[data-rank="alpha"].selected { background: rgba(13,107,92,0.3); border-color: var(--alpha-light); }
+.rank-card[data-rank="beta"].selected  { background: rgba(26,58,107,0.3); border-color: var(--beta-light); }
+.rank-card[data-rank="omega"].selected { background: rgba(107,45,139,0.3); border-color: var(--omega-light); }
+.rank-label { font-family: var(--font-display); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; }
+.rank-card[data-rank="alpha"] .rank-label { color: var(--alpha-light); }
+.rank-card[data-rank="beta"]  .rank-label { color: var(--beta-light); }
+.rank-card[data-rank="omega"] .rank-label { color: var(--omega-light); }
+.rank-desc { font-family: var(--font-body); font-style: italic; font-size: 11px; color: var(--dust); margin-top: 3px; }
+
+/* ─── GAME LAYOUT ─── */
+#screen-game { flex-direction: row; background: var(--void); }
+#topbar { position: absolute; top: 0; left: 0; right: 0; height: 54px; background: rgba(10,6,8,0.95); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 16px; gap: 12px; z-index: 100; backdrop-filter: blur(8px); }
+.topbar-logo { font-family: var(--font-display); font-size: 13px; letter-spacing: 2px; color: var(--gold-bright); text-shadow: var(--glow-gold); white-space: nowrap; }
+.topbar-stats { display: flex; gap: 16px; flex: 1; justify-content: center; align-items: center; }
+.stat-chip { display: flex; align-items: center; gap: 5px; font-family: var(--font-ui); font-size: 12px; font-weight: 600; }
+.stat-icon { font-size: 13px; }
+.stat-val { color: var(--gold-bright); }
+.stat-chip.hp .stat-val { color: #e05555; }
+.stat-chip.mp .stat-val { color: #5580e0; }
+.hp-bar, .mp-bar { width: 70px; height: 4px; border-radius: 2px; background: var(--stone-mid); overflow: hidden; }
+.hp-fill { height: 100%; background: #e05555; border-radius: 2px; transition: var(--transition); }
+.mp-fill { height: 100%; background: #5580e0; border-radius: 2px; transition: var(--transition); }
+.topbar-rank { font-family: var(--font-display); font-size: 10px; letter-spacing: 2px; padding: 3px 8px; border-radius: 2px; font-weight: 600; }
+.rank-alpha { background: rgba(13,107,92,0.3); color: var(--alpha-light); border: 1px solid var(--alpha-teal); }
+.rank-beta  { background: rgba(26,58,107,0.3); color: var(--beta-light);  border: 1px solid var(--beta-blue);  }
+.rank-omega { background: rgba(107,45,139,0.3); color: var(--omega-light); border: 1px solid var(--omega-purple); }
+.rank-unranked { background: rgba(107,85,96,0.3); color: var(--ash); border: 1px solid var(--dust); }
+.topbar-zone { font-family: var(--font-ui); font-size: 10px; letter-spacing: 2px; color: var(--dust); text-transform: uppercase; }
+.btn-logout { padding: 5px 12px; background: transparent; border: 1px solid var(--border); color: var(--dust); font-family: var(--font-ui); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: var(--transition); flex-shrink: 0; }
+.btn-logout:hover { border-color: var(--crimson); color: var(--crimson-bright); }
+
+#sidebar { position: absolute; top: 54px; left: 0; bottom: 0; width: 64px; background: rgba(10,6,8,0.9); border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding: 16px 0; gap: 4px; z-index: 90; }
+.nav-btn { width: 48px; height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; cursor: pointer; border: 1px solid transparent; background: transparent; transition: var(--transition); position: relative; }
+.nav-btn:hover { background: rgba(240,176,48,0.08); border-color: var(--border); }
+.nav-btn.active { background: rgba(139,26,42,0.3); border-color: var(--crimson); }
+.nav-icon { font-size: 18px; }
+.nav-label { font-family: var(--font-ui); font-size: 8px; letter-spacing: 1px; text-transform: uppercase; color: var(--dust); }
+.nav-btn.active .nav-label { color: var(--gold-pale); }
+.nav-badge { position: absolute; top: 4px; right: 4px; width: 16px; height: 16px; border-radius: 50%; background: var(--crimson-bright); font-family: var(--font-ui); font-size: 9px; font-weight: 700; color: white; display: none; align-items: center; justify-content: center; }
+.nav-badge.show { display: flex; }
+.nav-divider { width: 32px; height: 1px; background: var(--border); margin: 4px 0; }
+
+#main-content { position: absolute; top: 54px; left: 64px; right: 0; bottom: 0; overflow: hidden; }
+.panel { position: absolute; inset: 0; display: none; flex-direction: column; overflow: hidden; }
+.panel.active { display: flex; }
+.panel-header { padding: 20px 28px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: baseline; gap: 16px; background: rgba(10,6,8,0.4); flex-shrink: 0; }
+.panel-title { font-family: var(--font-display); font-size: 18px; letter-spacing: 2px; color: var(--gold-bright); }
+.panel-subtitle { font-family: var(--font-body); font-style: italic; font-size: 13px; color: var(--dust); }
+.panel-body { flex: 1; overflow-y: auto; padding: 24px 28px; }
+.panel-body::-webkit-scrollbar-track { background: transparent; }
+
+/* ─── WORLD PANEL ─── */
+#zone-map { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 900px; }
+.zone-card { padding: 20px; cursor: pointer; background: rgba(10,6,8,0.6); border: 1px solid var(--border); transition: var(--transition); clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px)); position: relative; overflow: hidden; }
+.zone-card:hover { border-color: var(--gold-mid); box-shadow: var(--glow-gold); }
+.zone-card.current-zone { border-color: var(--crimson-mid); background: rgba(139,26,42,0.2); }
+.zone-card.current-zone::after { content: 'HERE'; position: absolute; top: 8px; right: 8px; font-family: var(--font-ui); font-size: 8px; letter-spacing: 2px; color: var(--crimson-bright); padding: 2px 6px; border: 1px solid var(--crimson); }
+.zone-icon { font-size: 28px; margin-bottom: 10px; display: block; }
+.zone-name { font-family: var(--font-display); font-size: 14px; letter-spacing: 1px; color: var(--gold-pale); margin-bottom: 6px; }
+.zone-desc { font-family: var(--font-body); font-style: italic; font-size: 13px; color: var(--dust); line-height: 1.5; }
+.zone-players { margin-top: 10px; font-family: var(--font-ui); font-size: 11px; color: var(--ash); }
+.zone-event { margin-top: 6px; display: inline-block; padding: 2px 8px; background: rgba(224,45,74,0.2); border: 1px solid var(--crimson); font-family: var(--font-ui); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--crimson-bright); }
+
+/* ─── NPC MODAL ─── */
+#npc-modal { position: fixed; inset: 0; background: rgba(5,3,5,0.85); display: flex; align-items: center; justify-content: center; z-index: 200; opacity: 0; pointer-events: none; transition: var(--transition-slow); backdrop-filter: blur(4px); }
+#npc-modal.show { opacity: 1; pointer-events: all; }
+.npc-box { width: 560px; max-width: 95vw; background: var(--stone-deep); border: 1px solid var(--border-bright); clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 24px 100%, 0 calc(100% - 24px)); box-shadow: var(--glow-strong); padding: 32px 36px; position: relative; animation: modal-in 0.4s cubic-bezier(0.4,0,0.2,1); }
+@keyframes modal-in { from { transform: translateY(20px) scale(0.96); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+.npc-close { position: absolute; top: 16px; right: 20px; background: none; border: none; color: var(--dust); font-size: 20px; cursor: pointer; transition: var(--transition); }
+.npc-close:hover { color: var(--crimson-bright); }
+.npc-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+.npc-avatar { width: 60px; height: 60px; background: var(--stone-mid); border: 1px solid var(--border-bright); display: flex; align-items: center; justify-content: center; font-size: 28px; clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px)); }
+.npc-name { font-family: var(--font-display); font-size: 18px; letter-spacing: 1px; color: var(--gold-bright); margin-bottom: 4px; }
+.npc-meta { font-family: var(--font-ui); font-size: 11px; letter-spacing: 2px; color: var(--dust); text-transform: uppercase; }
+.npc-dialogue-box { background: rgba(10,6,8,0.6); border: 1px solid var(--border); padding: 16px 20px; margin-bottom: 20px; min-height: 80px; position: relative; }
+.npc-dialogue-box::before { content: '❝'; position: absolute; top: 8px; left: 10px; font-size: 24px; color: var(--border-bright); line-height: 1; }
+.npc-dialogue { font-family: var(--font-body); font-style: italic; font-size: 16px; line-height: 1.7; color: var(--pale); padding-left: 16px; white-space: pre-line; }
+.npc-choices { display: flex; flex-direction: column; gap: 8px; }
+.npc-choice { padding: 10px 16px; background: rgba(26,19,24,0.8); border: 1px solid var(--border); color: var(--pale); font-family: var(--font-body); font-size: 15px; cursor: pointer; transition: var(--transition); text-align: left; }
+.npc-choice:hover { border-color: var(--gold-mid); color: var(--gold-pale); background: rgba(90,61,0,0.2); }
+.npc-choice.quest  { border-color: rgba(240,176,48,0.4); }
+.npc-choice.action { border-color: rgba(139,26,42,0.5); }
+
+/* ─── INVENTORY ─── */
+.inv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.inv-item { padding: 16px; cursor: pointer; background: rgba(10,6,8,0.5); border: 1px solid var(--border); transition: var(--transition); clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px)); position: relative; }
+.inv-item:hover { border-color: var(--gold-mid); background: rgba(26,19,24,0.8); }
+.inv-item.equipped { border-color: var(--crimson-mid); }
+.item-rarity-bar { position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+.rarity-common    { background: var(--ash); }
+.rarity-uncommon  { background: #4CAF50; }
+.rarity-rare      { background: #2196F3; }
+.rarity-epic      { background: #9C27B0; }
+.rarity-legendary { background: linear-gradient(90deg, var(--gold-mid), var(--crimson-bright), var(--gold-mid)); }
+.item-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+.item-icon { font-size: 24px; }
+.item-badges { display: flex; gap: 4px; flex-direction: column; align-items: flex-end; }
+.item-badge { font-family: var(--font-ui); font-size: 9px; letter-spacing: 1px; padding: 2px 6px; text-transform: uppercase; }
+.badge-equipped  { background: rgba(139,26,42,0.4); color: var(--crimson-bright); border: 1px solid var(--crimson); }
+.badge-locked    { background: rgba(107,85,96,0.4); color: var(--ash); border: 1px solid var(--dust); }
+.badge-tradeable { background: rgba(90,61,0,0.4); color: var(--gold-mid); border: 1px solid var(--gold-dark); }
+.item-name { font-family: var(--font-display); font-size: 13px; letter-spacing: 1px; color: var(--gold-pale); margin-bottom: 4px; }
+.item-type { font-family: var(--font-ui); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--dust); margin-bottom: 6px; }
+.item-qty { font-family: var(--font-ui); font-size: 12px; color: var(--ash); }
+.item-actions { display: flex; gap: 6px; margin-top: 10px; }
+.item-btn { flex: 1; padding: 5px; background: transparent; border: 1px solid var(--border); color: var(--dust); font-family: var(--font-ui); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: var(--transition); }
+.item-btn:hover { border-color: var(--gold-mid); color: var(--gold-pale); }
+.inv-empty { grid-column: 1 / -1; padding: 60px; text-align: center; font-family: var(--font-body); font-style: italic; font-size: 18px; color: var(--dust); }
+
+/* ─── TRADE ─── */
+.trade-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 900px; }
+.trade-section { background: rgba(10,6,8,0.5); border: 1px solid var(--border); padding: 20px; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px)); }
+.trade-section-title { font-family: var(--font-display); font-size: 14px; letter-spacing: 2px; color: var(--gold-mid); margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.trade-form-group { margin-bottom: 14px; }
+.trade-label { display: block; margin-bottom: 6px; font-family: var(--font-ui); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--dust); }
+.trade-input { width: 100%; padding: 10px 14px; background: rgba(10,6,8,0.8); border: 1px solid var(--border); color: var(--pale); font-family: var(--font-ui); font-size: 14px; transition: var(--transition); outline: none; }
+.trade-input:focus { border-color: var(--gold-mid); }
+.trade-history-item { padding: 10px 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.trade-history-item:last-child { border-bottom: none; }
+.th-info { font-family: var(--font-body); font-size: 14px; color: var(--pale); }
+.th-meta { font-family: var(--font-ui); font-size: 11px; color: var(--dust); }
+.th-status { font-family: var(--font-ui); font-size: 10px; letter-spacing: 2px; padding: 2px 8px; }
+.status-completed { color: #4CAF50; border: 1px solid rgba(76,175,80,0.5); }
+.status-pending   { color: var(--gold-mid); border: 1px solid rgba(196,138,0,0.5); }
+.status-failed    { color: var(--crimson-bright); border: 1px solid var(--crimson); }
+
+/* ─── BONDS ─── */
+.bonds-list { display: flex; flex-direction: column; gap: 10px; max-width: 700px; }
+.bond-card { padding: 16px 20px; background: rgba(10,6,8,0.5); border: 1px solid var(--border); display: flex; align-items: center; gap: 16px; transition: var(--transition); clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px)); }
+.bond-card:hover { border-color: var(--gold-mid); }
+.bond-avatar { width: 44px; height: 44px; flex-shrink: 0; background: var(--stone-mid); border: 1px solid var(--border-bright); display: flex; align-items: center; justify-content: center; font-size: 18px; font-family: var(--font-display); color: var(--gold-pale); }
+.bond-info { flex: 1; }
+.bond-name { font-family: var(--font-display); font-size: 15px; letter-spacing: 1px; color: var(--gold-pale); margin-bottom: 3px; }
+.bond-type { font-family: var(--font-ui); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; }
+.bond-affinity-bar { width: 80px; height: 4px; background: var(--stone-mid); border-radius: 2px; overflow: hidden; }
+.bond-affinity-fill { height: 100%; border-radius: 2px; transition: var(--transition); }
+.affinity-positive { background: linear-gradient(90deg, var(--crimson), var(--gold-bright)); }
+.affinity-negative { background: var(--crimson-deep); }
+.bond-mate  { color: var(--omega-light); }
+.bond-lover { color: var(--crimson-bright); }
+.bond-ally  { color: var(--alpha-light); }
+.bond-rival { color: var(--gold-mid); }
+.bond-enemy { color: var(--crimson-glow); }
+.bond-friend { color: var(--pale); }
+
+/* ─── QUESTS ─── */
+.quest-list { display: flex; flex-direction: column; gap: 12px; max-width: 800px; }
+.quest-card { padding: 20px 24px; background: rgba(10,6,8,0.5); border: 1px solid var(--border); transition: var(--transition); clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px)); }
+.quest-card.completed   { border-color: rgba(76,175,80,0.4); }
+.quest-card.in_progress { border-color: var(--gold-dark); }
+.quest-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.quest-title { font-family: var(--font-display); font-size: 15px; letter-spacing: 1px; color: var(--gold-pale); }
+.quest-status-badge { font-family: var(--font-ui); font-size: 10px; letter-spacing: 2px; padding: 3px 8px; text-transform: uppercase; }
+.quest-status-badge.in_progress { background: rgba(90,61,0,0.4); color: var(--gold-mid); border: 1px solid var(--gold-dark); }
+.quest-status-badge.completed   { background: rgba(76,175,80,0.2); color: #81C784; border: 1px solid rgba(76,175,80,0.5); }
+.quest-status-badge.not_started { background: rgba(107,85,96,0.3); color: var(--ash); border: 1px solid var(--dust); }
+.quest-desc { font-family: var(--font-body); font-style: italic; font-size: 14px; color: var(--ash); line-height: 1.6; margin-bottom: 12px; }
+.quest-progress { display: flex; gap: 12px; flex-wrap: wrap; }
+.quest-prog-item { font-family: var(--font-ui); font-size: 11px; color: var(--dust); letter-spacing: 1px; }
+.quest-prog-item span { color: var(--gold-bright); font-weight: 600; }
+.quest-reward { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+.quest-reward-label { font-family: var(--font-ui); font-size: 10px; letter-spacing: 2px; color: var(--dust); text-transform: uppercase; }
+.quest-reward-item { font-family: var(--font-ui); font-size: 12px; color: var(--gold-bright); }
+.btn-claim { margin-left: auto; padding: 6px 16px; background: rgba(139,26,42,0.4); border: 1px solid var(--crimson-mid); color: var(--gold-pale); font-family: var(--font-ui); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: var(--transition); }
+.btn-claim:hover { background: var(--crimson); box-shadow: var(--glow-red); }
+.btn-claim:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ─── PROFILE ─── */
+.profile-layout { display: grid; grid-template-columns: 280px 1fr; gap: 24px; max-width: 900px; }
+.profile-card { padding: 24px; background: rgba(10,6,8,0.5); border: 1px solid var(--border-bright); clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px)); }
+.profile-avatar-large { width: 80px; height: 80px; margin: 0 auto 16px; background: linear-gradient(135deg, var(--crimson-deep), var(--stone-mid)); border: 2px solid var(--border-bright); display: flex; align-items: center; justify-content: center; font-size: 36px; font-family: var(--font-display); color: var(--gold-bright); clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px)); }
+.profile-username { font-family: var(--font-display); font-size: 18px; letter-spacing: 2px; color: var(--gold-bright); text-align: center; margin-bottom: 4px; text-shadow: var(--glow-gold); }
+.profile-class { font-family: var(--font-ui); font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--dust); text-align: center; margin-bottom: 16px; }
+.profile-stats { display: flex; flex-direction: column; gap: 10px; }
+.profile-stat-row { display: flex; justify-content: space-between; align-items: center; }
+.profile-stat-label { font-family: var(--font-ui); font-size: 11px; letter-spacing: 2px; color: var(--dust); text-transform: uppercase; }
+.profile-stat-value { font-family: var(--font-ui); font-size: 14px; font-weight: 600; color: var(--pale); }
+.profile-stat-value.gold { color: var(--gold-bright); }
+.exp-bar { height: 4px; background: var(--stone-mid); border-radius: 2px; overflow: hidden; margin-top: 4px; }
+.exp-fill { height: 100%; background: linear-gradient(90deg, var(--crimson), var(--gold-bright)); border-radius: 2px; }
+.profile-edit { display: flex; flex-direction: column; gap: 14px; }
+.edit-label { font-family: var(--font-ui); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--dust); margin-bottom: 6px; display: block; }
+.edit-input { width: 100%; padding: 10px 14px; background: rgba(10,6,8,0.8); border: 1px solid var(--border); color: var(--pale); font-family: var(--font-body); font-size: 15px; outline: none; transition: var(--transition); }
+.edit-input:focus { border-color: var(--gold-mid); }
+.edit-textarea { resize: vertical; min-height: 100px; font-style: italic; }
+.btn-save { padding: 12px 28px; align-self: flex-start; background: rgba(90,61,0,0.4); border: 1px solid var(--gold-mid); color: var(--gold-bright); font-family: var(--font-ui); font-size: 12px; letter-spacing: 3px; text-transform: uppercase; cursor: pointer; transition: var(--transition); clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); }
+.btn-save:hover { background: var(--gold-dark); box-shadow: var(--glow-gold); }
+
+/* ─── TOAST ─── */
+#toast-container { position: fixed; top: 70px; right: 20px; z-index: 999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+.toast { padding: 12px 20px; min-width: 260px; max-width: 380px; background: var(--stone-deep); border-left: 3px solid var(--gold-bright); font-family: var(--font-ui); font-size: 13px; letter-spacing: 1px; color: var(--pale); opacity: 0; animation: toast-in 0.4s forwards, toast-out 0.4s 3.5s forwards; box-shadow: 0 4px 20px rgba(0,0,0,0.6); }
+.toast.error   { border-left-color: var(--crimson-bright); }
+.toast.success { border-left-color: #4CAF50; }
+@keyframes toast-in  { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes toast-out { from { opacity: 1; } to { opacity: 0; transform: translateX(20px); } }
+@keyframes sigil-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes heat-pulse { 0%, 100% { box-shadow: 0 0 20px rgba(107,45,139,0.4); } 50% { box-shadow: 0 0 40px rgba(107,45,139,0.8); } }
+.heat-active { animation: heat-pulse 2s ease-in-out infinite; }
+.btn-config { margin-top: 16px; width: 100%; padding: 14px; background: linear-gradient(135deg, var(--crimson-deep), var(--crimson)); border: 1px solid var(--crimson-mid); color: var(--gold-pale); font-family: var(--font-ui); font-size: 13px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; cursor: pointer; transition: var(--transition); clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px)); }
+.btn-config:hover { background: linear-gradient(135deg, var(--crimson), var(--crimson-mid)); box-shadow: var(--glow-red); }
+</style>
+</head>
+<body>
+
+<!-- ═══════════ CONFIG SETUP ═══════════ -->
+<div id="config-notice">
+  <div class="config-box">
+    <div class="config-title">⚔ Aurelia Kingdom — Setup</div>
+    <div class="config-sub">Hubungkan ke Supabase untuk memulai permainan.</div>
+    <div class="config-step">
+      <div class="config-step-num">STEP 01 — DATABASE</div>
+      <div class="config-step-text">Buka Supabase Dashboard → SQL Editor → Paste isi file <code>aurelia-schema.sql</code> → Run.</div>
+    </div>
+    <div class="config-step">
+      <div class="config-step-num">STEP 02 — DISABLE EMAIL CONFIRMATION</div>
+      <div class="config-step-text">Authentication → Settings → Email → <code>Confirm email</code> → OFF (supaya register langsung bisa login).</div>
+    </div>
+    <div class="config-step">
+      <div class="config-step-num">STEP 03 — CREDENTIALS</div>
+      <div class="config-step-text">Settings → API → copy Project URL dan anon/public key.</div>
+    </div>
+    <div class="config-inputs">
+      <input class="config-input" id="cfg-url" type="text" placeholder="https://xxxxxx.supabase.co" autocomplete="off" />
+      <input class="config-input" id="cfg-key" type="text" placeholder="eyJhbGci... (anon key)" autocomplete="off" />
+    </div>
+    <button class="btn-config" id="btn-save-config">⚔ Masuk ke Kastil</button>
+  </div>
+</div>
+
+<!-- ═══════════ LOADING SCREEN ═══════════ -->
+<div id="screen-loading" class="screen">
+  <div class="loading-sigil">
+    <svg viewBox="0 0 120 120" width="120" height="120">
+      <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(240,176,48,0.2)" stroke-width="1"/>
+      <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(139,26,42,0.8)" stroke-width="1.5" stroke-dasharray="80 260" stroke-linecap="round"/>
+      <circle cx="60" cy="60" r="40" fill="none" stroke="rgba(240,176,48,0.6)" stroke-width="1" stroke-dasharray="50 200" stroke-linecap="round"/>
+      <path d="M60 20 L66 50 L80 44 L68 58 L80 76 L60 66 L40 76 L52 58 L40 44 L54 50 Z" fill="none" stroke="rgba(240,176,48,0.5)" stroke-width="0.8" stroke-linejoin="round"/>
+      <circle cx="60" cy="60" r="6" fill="rgba(224,45,74,0.8)"/>
+    </svg>
+  </div>
+  <div class="loading-title">Aurelia Kingdom</div>
+  <div class="loading-subtitle">The Unknown Castle</div>
+  <div class="loading-bar-wrap"><div class="loading-bar" id="loading-bar"></div></div>
+  <div class="loading-text" id="loading-text">Awakening the castle...</div>
+</div>
+
+<!-- ═══════════ AUTH SCREEN ═══════════ -->
+<div id="screen-auth" class="screen">
+  <div class="auth-castle-bg"></div>
+  <div class="auth-box">
+    <div class="auth-logo">
+      <span class="kingdom">Aurelia Kingdom</span>
+      <span class="title">The Unknown Castle</span>
+      <span class="subtitle">Enter if you dare, stranger.</span>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login" onclick="UI.switchAuthTab('login')">Masuk</button>
+      <button class="auth-tab" id="tab-register" onclick="UI.switchAuthTab('register')">Daftar</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="form-login">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" id="login-email" type="email" placeholder="email@kamu.com" autocomplete="email" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" id="login-password" type="password" placeholder="••••••••" autocomplete="current-password" />
+      </div>
+      <button class="btn-primary" id="btn-login" onclick="Auth.login()">Masuk ke Kastil</button>
+      <div class="auth-error" id="login-error"></div>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="form-register" style="display:none">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" id="reg-email" type="email" placeholder="email@kamu.com" autocomplete="email" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password (min. 8 karakter)</label>
+        <input class="form-input" id="reg-password" type="password" placeholder="••••••••" autocomplete="new-password" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input class="form-input" id="reg-username" type="text" placeholder="huruf, angka, underscore" maxlength="24" autocomplete="username" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Pilih Class</label>
+        <div class="class-grid">
+          <div class="class-card selected" data-class="knight" onclick="UI.selectClass(this)"><div class="class-icon">⚔️</div><div class="class-name">Knight</div></div>
+          <div class="class-card" data-class="mage"   onclick="UI.selectClass(this)"><div class="class-icon">🔮</div><div class="class-name">Mage</div></div>
+          <div class="class-card" data-class="rogue"  onclick="UI.selectClass(this)"><div class="class-icon">🗡️</div><div class="class-name">Rogue</div></div>
+          <div class="class-card" data-class="healer" onclick="UI.selectClass(this)"><div class="class-icon">✨</div><div class="class-name">Healer</div></div>
+          <div class="class-card" data-class="bard"   onclick="UI.selectClass(this)"><div class="class-icon">🎵</div><div class="class-name">Bard</div></div>
+          <div class="class-card" data-class="ranger" onclick="UI.selectClass(this)"><div class="class-icon">🏹</div><div class="class-name">Ranger</div></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Pilih Rank Omegaverse</label>
+        <div class="rank-grid">
+          <div class="rank-card selected" data-rank="alpha" onclick="UI.selectRank(this)"><div class="rank-label">Alpha</div><div class="rank-desc">Dominan, berkuasa</div></div>
+          <div class="rank-card" data-rank="beta"  onclick="UI.selectRank(this)"><div class="rank-label">Beta</div><div class="rank-desc">Seimbang, adaptif</div></div>
+          <div class="rank-card" data-rank="omega" onclick="UI.selectRank(this)"><div class="rank-label">Omega</div><div class="rank-desc">Langka, insting kuat</div></div>
+        </div>
+      </div>
+      <button class="btn-primary" id="btn-register" onclick="Auth.register()">Mulai Perjalanan</button>
+      <div class="auth-error" id="register-error"></div>
+      <div class="auth-info"  id="register-info"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ GAME SCREEN ═══════════ -->
+<div id="screen-game" class="screen">
+  <div id="topbar">
+    <div class="topbar-logo">⚔ AURELIA</div>
+    <div class="topbar-stats">
+      <div class="stat-chip hp">
+        <span class="stat-icon">❤</span>
+        <div class="hp-bar"><div class="hp-fill" id="hp-fill"></div></div>
+        <span class="stat-val" id="stat-hp">100/100</span>
+      </div>
+      <div class="stat-chip mp">
+        <span class="stat-icon">◆</span>
+        <div class="mp-bar"><div class="mp-fill" id="mp-fill"></div></div>
+        <span class="stat-val" id="stat-mp">50/50</span>
+      </div>
+      <div class="stat-chip gold">
+        <span class="stat-icon">◈</span>
+        <span class="stat-val" id="stat-gold">0</span>
+        <span style="font-family:var(--font-ui);font-size:10px;color:var(--dust);letter-spacing:2px">GOLD</span>
+      </div>
+      <div class="stat-chip">
+        <span class="stat-icon">✦</span>
+        <span class="stat-val" id="stat-level">Lv.1</span>
+      </div>
+      <div id="rank-badge" class="topbar-rank rank-unranked">UNRANKED</div>
+    </div>
+    <div class="topbar-zone" id="topbar-zone">⬡ CASTLE ENTRANCE</div>
+    <button class="btn-logout" onclick="Auth.logout()">⬡ Keluar</button>
+  </div>
+
+  <div id="sidebar">
+    <button class="nav-btn active" data-panel="world"     onclick="UI.openPanel('world')">    <span class="nav-icon">🏰</span><span class="nav-label">Castle</span></button>
+    <button class="nav-btn"        data-panel="inventory" onclick="UI.openPanel('inventory')"><span class="nav-icon">⚔</span><span class="nav-label">Items</span></button>
+    <button class="nav-btn"        data-panel="trade"     onclick="UI.openPanel('trade')">    <span class="nav-icon">⇌</span><span class="nav-label">Trade</span><div class="nav-badge" id="badge-trade"></div></button>
+    <div class="nav-divider"></div>
+    <button class="nav-btn"        data-panel="quests"    onclick="UI.openPanel('quests')">   <span class="nav-icon">📜</span><span class="nav-label">Quests</span><div class="nav-badge" id="badge-quests"></div></button>
+    <button class="nav-btn"        data-panel="bonds"     onclick="UI.openPanel('bonds')">    <span class="nav-icon">⛓</span><span class="nav-label">Bonds</span></button>
+    <div class="nav-divider"></div>
+    <button class="nav-btn"        data-panel="profile"   onclick="UI.openPanel('profile')">  <span class="nav-icon">◈</span><span class="nav-label">Profile</span></button>
+  </div>
+
+  <div id="main-content">
+    <!-- WORLD -->
+    <div id="panel-world" class="panel active">
+      <div class="panel-header"><div class="panel-title">The Unknown Castle</div><div class="panel-subtitle">Pilih area untuk dijelajahi</div></div>
+      <div class="panel-body"><div id="zone-map"></div></div>
+    </div>
+    <!-- INVENTORY -->
+    <div id="panel-inventory" class="panel">
+      <div class="panel-header"><div class="panel-title">Inventory</div><div class="panel-subtitle" id="inv-count">0 item</div></div>
+      <div class="panel-body"><div id="inv-grid" class="inv-grid"></div></div>
+    </div>
+    <!-- TRADE -->
+    <div id="panel-trade" class="panel">
+      <div class="panel-header"><div class="panel-title">Trade & Exchange</div><div class="panel-subtitle">Kirim item atau gold ke pemain lain</div></div>
+      <div class="panel-body">
+        <div class="trade-layout">
+          <div class="trade-section">
+            <div class="trade-section-title">⇒ Kirim ke Player</div>
+            <div class="trade-form-group"><label class="trade-label">Username Penerima</label><input class="trade-input" id="trade-to" type="text" placeholder="username_mereka" /></div>
+            <div class="trade-form-group"><label class="trade-label">Jumlah Gold</label><input class="trade-input" id="trade-gold" type="number" min="0" placeholder="0" /></div>
+            <div class="trade-form-group"><label class="trade-label">Item ID (klik "Copy ID" di inventory)</label><input class="trade-input" id="trade-item-id" type="text" placeholder="Kosongkan jika gold saja" /></div>
+            <div class="trade-form-group"><label class="trade-label">Jumlah Item</label><input class="trade-input" id="trade-qty" type="number" min="1" value="1" /></div>
+            <button class="btn-primary" id="btn-trade-send" onclick="Trade.send()" style="margin-top:8px">Kirim ⇒</button>
+          </div>
+          <div class="trade-section">
+            <div class="trade-section-title">⊞ Riwayat Transaksi</div>
+            <div id="trade-history"><div style="font-family:var(--font-body);font-style:italic;color:var(--dust);padding:20px 0">Belum ada transaksi...</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- QUESTS -->
+    <div id="panel-quests" class="panel">
+      <div class="panel-header"><div class="panel-title">Quests</div><div class="panel-subtitle">Perjalananmu di kastil ini</div></div>
+      <div class="panel-body"><div id="quest-list" class="quest-list"></div></div>
+    </div>
+    <!-- BONDS -->
+    <div id="panel-bonds" class="panel">
+      <div class="panel-header"><div class="panel-title">Social Bonds</div><div class="panel-subtitle">Aliansi, persaingan, dan ikatan yang lebih dalam</div></div>
+      <div class="panel-body"><div id="bonds-list" class="bonds-list"></div></div>
+    </div>
+    <!-- PROFILE -->
+    <div id="panel-profile" class="panel">
+      <div class="panel-header"><div class="panel-title">Profil Kamu</div><div class="panel-subtitle">Kisah keberadaanmu</div></div>
+      <div class="panel-body">
+        <div class="profile-layout">
+          <div class="profile-card">
+            <div class="profile-avatar-large" id="profile-avatar">?</div>
+            <div class="profile-username" id="profile-username">—</div>
+            <div class="profile-class" id="profile-class">—</div>
+            <div class="profile-stats">
+              <div class="profile-stat-row"><span class="profile-stat-label">Level</span><span class="profile-stat-value" id="prof-level">1</span></div>
+              <div><div class="profile-stat-row"><span class="profile-stat-label">EXP</span><span class="profile-stat-value" id="prof-exp">0 XP</span></div><div class="exp-bar" style="margin-top:6px"><div class="exp-fill" id="prof-exp-fill" style="width:0%"></div></div></div>
+              <div class="profile-stat-row"><span class="profile-stat-label">Gold</span><span class="profile-stat-value gold" id="prof-gold">0</span></div>
+              <div class="profile-stat-row"><span class="profile-stat-label">Crystals</span><span class="profile-stat-value" id="prof-crystals" style="color:#a855cc">0</span></div>
+              <div class="profile-stat-row"><span class="profile-stat-label">Zone</span><span class="profile-stat-value" id="prof-zone" style="font-size:11px">—</span></div>
+              <div class="profile-stat-row"><span class="profile-stat-label">UID</span><span class="profile-stat-value" id="prof-uid" style="font-size:9px;color:var(--dust);word-break:break-all">—</span></div>
+            </div>
+          </div>
+          <div class="profile-edit">
+            <div><label class="edit-label">Display Name</label><input class="edit-input" id="edit-display" type="text" maxlength="32" /></div>
+            <div><label class="edit-label">Bio (max 500 karakter)</label><textarea class="edit-input edit-textarea" id="edit-bio" maxlength="500"></textarea></div>
+            <button class="btn-save" onclick="Player.saveProfile()">Simpan</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ NPC MODAL ═══════════ -->
+<div id="npc-modal">
+  <div class="npc-box">
+    <button class="npc-close" onclick="UI.closeNPC()">✕</button>
+    <div class="npc-header">
+      <div class="npc-avatar" id="npc-avatar">?</div>
+      <div>
+        <div class="npc-name" id="npc-name">NPC</div>
+        <div class="npc-meta" id="npc-meta">Unknown · Unknown</div>
+      </div>
+    </div>
+    <div class="npc-dialogue-box"><div class="npc-dialogue" id="npc-dialogue">...</div></div>
+    <div class="npc-choices" id="npc-choices"></div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<!-- ═══════════ SCRIPTS ═══════════ -->
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+// ══════════════════════════════════════
+// CONFIG MANAGER
+// ══════════════════════════════════════
+function getConfig() {
+  return {
+    url: localStorage.getItem('ak_sb_url') || '',
+    key: localStorage.getItem('ak_sb_key') || '',
+  };
+}
+function configIsSet() {
+  const c = getConfig();
+  return c.url.startsWith('https://') && c.key.length > 20;
+}
+
+// Handle config form
+const cfgNotice = document.getElementById('config-notice');
+const cfgUrlEl  = document.getElementById('cfg-url');
+const cfgKeyEl  = document.getElementById('cfg-key');
+
+// Pre-fill jika sudah ada
+const _c = getConfig();
+if (_c.url) cfgUrlEl.value = _c.url;
+if (_c.key) cfgKeyEl.value = _c.key;
+
+document.getElementById('btn-save-config').addEventListener('click', () => {
+  const url = cfgUrlEl.value.trim();
+  const key = cfgKeyEl.value.trim();
+  if (!url.startsWith('https://') || key.length < 20) {
+    alert('URL atau key tidak valid. Periksa kembali.');
+    return;
+  }
+  localStorage.setItem('ak_sb_url', url);
+  localStorage.setItem('ak_sb_key', key);
+  location.reload();
+});
+
+if (!configIsSet()) {
+  cfgNotice.classList.add('show');
+  // Stop execution — tunggu user input config dulu
+  throw new Error('WAITING_FOR_CONFIG');
+}
+
+// ══════════════════════════════════════
+// SUPABASE CLIENT
+// ══════════════════════════════════════
+const { url: SB_URL, key: SB_KEY } = getConfig();
+const supabase = createClient(SB_URL, SB_KEY);
+
+// ══════════════════════════════════════
+// GAME STATE (satu object terpusat)
+// ══════════════════════════════════════
+const State = {
+  user:      null,
+  player:    null,
+  inventory: [],
+  quests:    [],
+  bonds:     [],
+  selectedClass: 'knight',
+  selectedRank:  'alpha',
+  realtimeChannel: null,
+  currentNPC: null,
+};
+
+// ══════════════════════════════════════
+// ZONE & NPC DATA
+// ══════════════════════════════════════
+const ZONES = [
+  { id: 'castle_entrance',  name: 'Castle Entrance',   icon: '🏰', desc: 'Gerbang besar kastil. Para penjelajah berkumpul di sini.',        event: null },
+  { id: 'throne_room',      name: 'Throne Room',       icon: '👑', desc: 'Pusat kekuasaan. Singgasana kosong berbisik tentang raja yang hilang.', event: 'mystery_night' },
+  { id: 'shadow_corridors', name: 'Shadow Corridors',  icon: '🌑', desc: 'Lorong gelap tempat rahasia dan perjanjian dibisikkan.',          event: null },
+  { id: 'healers_sanctum',  name: "Healer's Sanctum",  icon: '✨', desc: 'Tempat suci penyembuhan jiwa dan raga.',                         event: null },
+  { id: 'merchants_hall',   name: "Merchant's Hall",   icon: '⚖',  desc: 'Barang langka dari seluruh dunia. Segalanya bisa dibeli.',       event: 'market_day' },
+  { id: 'dungeon_depths',   name: 'Dungeon Depths',    icon: '⛓',  desc: 'Penjara terdalam kastil. Masuk mudah, keluar... tidak.',         event: null },
+  { id: 'garden_of_oaths',  name: 'Garden of Oaths',  icon: '🌹', desc: 'Di sini ikatan dibentuk di bawah sinar bulan. Alpha menuntut.',  event: 'heat_moon' },
+  { id: 'armory',           name: 'Armory',            icon: '⚔',  desc: 'Deretan senjata buatan pandai besi kastil.',                    event: null },
+  { id: 'library_of_lost',  name: 'Library of Lost',  icon: '📜', desc: 'Teks kuno tentang lore omegaverse dan seni terlarang.',          event: null },
+];
+
+const NPCS = {
+  castle_entrance: [
+    {
+      id: 'guard_theron', name: 'Theron', icon: '⚔', faction: 'Castle Guard', rank: 'alpha',
+      dialogues: [
+        { text: "Berhenti, orang asing. Sebutkan tujuanmu di kastil ini.", choices: [
+          { label: "Aku mencari kekayaan dan kejayaan.", next: 1, type: 'normal' },
+          { label: "Aku hanya lewat.", next: 2, type: 'normal' },
+          { label: "[Quest] Aku dengar ada pengkhianat di sini.", next: 3, type: 'quest' },
+        ]},
+        { text: "Ha! Kekayaan? Kastil ini menawarkan harta dan bahaya dalam jumlah yang sama. Hati-hati.", choices: [{ label: "Akan kuingat itu.", next: -1, type: 'normal' }] },
+        { text: "Lewat, katamu? Tidak ada yang sekadar lewat di kastil ini, penjelajah.", choices: [{ label: "Mungkin kamu benar.", next: -1, type: 'normal' }] },
+        { text: "Pengkhianat?! Rendahkan suaramu! Jika kau benar-benar tahu sesuatu, temui aku di Shadow Corridors malam ini.", choices: [{ label: "Aku akan di sana.", next: -1, type: 'quest' }] },
+      ]
+    },
+    {
+      id: 'wanderer_lyra', name: 'Lyra', icon: '🌙', faction: 'Lone Wolf', rank: 'omega',
+      dialogues: [
+        { text: "Kamu berbau seperti seseorang yang baru datang... dan seseorang yang akan pergi dalam keadaan sangat berbeda.", choices: [
+          { label: "Apa maksudmu?", next: 1, type: 'normal' },
+          { label: "[Bond] Kamu menarik.", next: 2, type: 'action' },
+        ]},
+        { text: "Kastil ini punya cara untuk mengupas lapisanmu satu per satu. Pada saat kamu pergi — jika kamu pergi — kamu akan tahu siapa dirimu sebenarnya.", choices: [{ label: "Terima kasih atas peringatannya.", next: -1, type: 'normal' }] },
+        { text: "*Dia menatapmu dengan tenang.* Hati-hati dengan perasaan itu. Ikatan yang terjalin di sini mengalir lebih dalam dari darah.", choices: [{ label: "Aku mengerti.", next: -1, type: 'action' }] },
+      ]
+    },
+  ],
+  throne_room: [
+    {
+      id: 'chancellor_mors', name: 'Chancellor Mors', icon: '👑', faction: 'Shadow Court', rank: 'alpha',
+      dialogues: [
+        { text: "Singgasana telah kosong selama tujuh tahun. Aku menjaga ketertiban selama ketidakhadiran Yang Mulia. Jangan salah artikan kesopananku sebagai kelemahan.", choices: [
+          { label: "Siapa rajanya?", next: 1, type: 'normal' },
+          { label: "[Quest] Aku bisa membantumu menemukannya.", next: 2, type: 'quest' },
+        ]},
+        { text: "Raja Aureus. Alpha paling kuat yang pernah lahir di alam ini. Ia menghilang malam Omega Convergence. Kami tidak membicarakannya.", choices: [{ label: "Sangat menarik...", next: -1, type: 'normal' }] },
+        { text: "Kamu berani mengambil tugas seberat itu? Baiklah. Aku akan memantau perkembanganmu.", choices: [{ label: "Aku tidak akan gagal.", next: -1, type: 'quest' }] },
+      ]
+    },
+  ],
+  healers_sanctum: [
+    {
+      id: 'healer_senna', name: 'Sister Senna', icon: '✨', faction: 'Healer Order', rank: 'beta',
+      dialogues: [
+        { text: "Selamat datang. Apakah kamu terluka? Kastil ini suka meninggalkan bekas luka.", choices: [
+          { label: "Tolong pulihkan kesehatanku.", next: 1, type: 'action' },
+          { label: "Aku baik-baik saja, hanya ingin melihat-lihat.", next: 2, type: 'normal' },
+        ]},
+        { text: "*Dia meletakkan tangan dinginnya di bahumu.* Tenang. Biarkan sihir ini bekerja...\n\n[HP & MP dipulihkan sepenuhnya]", choices: [{ label: "Terima kasih, Suster.", next: -1, type: 'action' }], onSelect: 'heal' },
+        { text: "Lihatlah dengan seksama. Setiap batu di sini telah menyerap satu abad doa dan penderitaan.", choices: [{ label: "Aku percaya itu.", next: -1, type: 'normal' }] },
+      ]
+    },
+  ],
+};
+
+const QUEST_CATALOG = [
+  {
+    key: 'gates_of_fate',
+    title: 'Gates of Fate',
+    desc: "Theron mencurigai ada pengkhianat di kastil. Bantu dia ungkap kebenaran dengan mengunjungi Shadow Corridors.",
+    npc: 'Theron',
+    rewards: { gold: 500, exp: 200 },
+    steps: [{ label: 'Kunjungi Shadow Corridors', target: 1 }, { label: 'Kembali ke Theron', target: 1 }],
+  },
+  {
+    key: 'missing_king',
+    title: 'The Vanished King',
+    desc: "Chancellor Mors memintamu menyelidiki hilangnya Raja Aureus. Cari petunjuk di Library of Lost.",
+    npc: 'Chancellor Mors',
+    rewards: { gold: 2000, exp: 800 },
+    steps: [{ label: 'Baca teks terlarang', target: 3 }, { label: 'Temukan Omega Seal', target: 1 }],
+  },
+];
+
+// ══════════════════════════════════════
+// UI CONTROLLER
+// ══════════════════════════════════════
+window.UI = {
+  switchAuthTab(tab) {
+    document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+    document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+    document.getElementById('form-login').style.display    = tab === 'login'    ? 'block' : 'none';
+    document.getElementById('form-register').style.display = tab === 'register' ? 'block' : 'none';
+  },
+
+  selectClass(el) {
+    document.querySelectorAll('.class-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    State.selectedClass = el.dataset.class;
+  },
+
+  selectRank(el) {
+    document.querySelectorAll('.rank-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    State.selectedRank = el.dataset.rank;
+  },
+
+  showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const el = document.getElementById('screen-' + id);
+    if (el) el.classList.add('active');
+  },
+
+  openPanel(id) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    const panel = document.getElementById('panel-' + id);
+    const btn   = document.querySelector(`.nav-btn[data-panel="${id}"]`);
+    if (panel) panel.classList.add('active');
+    if (btn)   btn.classList.add('active');
+
+    if (id === 'world')     World.render();
+    if (id === 'inventory') Inventory.render();
+    if (id === 'trade')     Trade.loadHistory();
+    if (id === 'quests')    Quests.render();
+    if (id === 'bonds')     Bonds.render();
+    if (id === 'profile')   Player.renderProfile();
+  },
+
+  updateTopBar() {
+    const p = State.player;
+    if (!p) return;
+    const hpPct = p.hp_max > 0 ? Math.round((p.hp_current / p.hp_max) * 100) : 0;
+    const mpPct = p.mp_max > 0 ? Math.round((p.mp_current / p.mp_max) * 100) : 0;
+    document.getElementById('hp-fill').style.width  = hpPct + '%';
+    document.getElementById('mp-fill').style.width  = mpPct + '%';
+    document.getElementById('stat-hp').textContent  = `${p.hp_current}/${p.hp_max}`;
+    document.getElementById('stat-mp').textContent  = `${p.mp_current}/${p.mp_max}`;
+    document.getElementById('stat-gold').textContent  = (p.gold || 0).toLocaleString();
+    document.getElementById('stat-level').textContent = 'Lv.' + (p.level || 1);
+    document.getElementById('topbar-zone').textContent = '⬡ ' + (p.current_zone || 'castle_entrance').replace(/_/g, ' ').toUpperCase();
+    const rankEl = document.getElementById('rank-badge');
+    const rank   = p.ov_rank || 'unranked';
+    rankEl.textContent = rank.toUpperCase();
+    rankEl.className   = 'topbar-rank rank-' + rank;
+    if (p.ov_heat_cycle) rankEl.classList.add('heat-active');
+  },
+
+  toast(msg, type = 'info') {
+    const c = document.getElementById('toast-container');
+    const t = document.createElement('div');
+    t.className   = 'toast ' + type;
+    t.textContent = msg;
+    c.appendChild(t);
+    setTimeout(() => { if (t.parentNode) t.remove(); }, 4200);
+  },
+
+  setLoading(pct, text) {
+    document.getElementById('loading-bar').style.width = pct + '%';
+    if (text) document.getElementById('loading-text').textContent = text;
+  },
+
+  openNPC(npc, zoneId) {
+    const npcData = (NPCS[zoneId] || []).find(n => n.id === npc.id) || npc;
+    if (!npcData || !npcData.dialogues) return;
+    State.currentNPC = npcData;
+    document.getElementById('npc-avatar').textContent = npcData.icon || '?';
+    document.getElementById('npc-name').textContent   = npcData.name;
+    document.getElementById('npc-meta').textContent   = (npcData.rank || 'unknown').toUpperCase() + ' · ' + (npcData.faction || 'Unknown');
+    this._renderDialogue(npcData.dialogues[0]);
+    document.getElementById('npc-modal').classList.add('show');
+  },
+
+  _renderDialogue(dialogue) {
+    if (!dialogue) return;
+    document.getElementById('npc-dialogue').textContent = dialogue.text || '';
+    const el = document.getElementById('npc-choices');
+    el.innerHTML = '';
+    (dialogue.choices || []).forEach(ch => {
+      const btn = document.createElement('button');
+      btn.className   = 'npc-choice ' + (ch.type || 'normal');
+      btn.textContent = ch.label;
+      btn.onclick = () => {
+        // Jika pilihan ini punya onSelect action, jalankan
+        if (ch.onSelect === 'heal') this._doHeal();
+        // Navigasi ke dialog berikutnya
+        if (ch.next === -1) { this.closeNPC(); return; }
+        const nextDialogue = State.currentNPC?.dialogues?.[ch.next];
+        if (nextDialogue) this._renderDialogue(nextDialogue);
+      };
+      el.appendChild(btn);
+    });
+  },
+
+  _doHeal() {
+    if (!State.player) return;
+    State.player.hp_current = State.player.hp_max;
+    State.player.mp_current = State.player.mp_max;
+    this.updateTopBar();
+    this.toast('✨ Senna memulihkan HP dan MP kamu sepenuhnya.', 'success');
+  },
+
+  closeNPC() {
+    document.getElementById('npc-modal').classList.remove('show');
+    State.currentNPC = null;
+  },
+};
+
+// ══════════════════════════════════════
+// WORLD
+// ══════════════════════════════════════
+window.World = {
+  render() {
+    const el = document.getElementById('zone-map');
+    if (!el) return;
+    const currentZone = State.player?.current_zone || 'castle_entrance';
+    el.innerHTML = ZONES.map(z => `
+      <div class="zone-card ${z.id === currentZone ? 'current-zone' : ''}"
+           onclick="World.enter('${z.id}')">
+        <span class="zone-icon">${z.icon}</span>
+        <div class="zone-name">${z.name}</div>
+        <div class="zone-desc">${z.desc}</div>
+        <div class="zone-players">⬡ ${Math.floor(Math.random()*12)+1} jiwa di sini</div>
+        ${z.event ? `<div class="zone-event">${z.event.replace(/_/g,' ').toUpperCase()}</div>` : ''}
+      </div>
+    `).join('');
+  },
+
+  async enter(zoneId) {
+    if (!State.player || !State.user) return;
+    const zone = ZONES.find(z => z.id === zoneId);
+    if (!zone) return;
+
+    if (State.player.current_zone === zoneId) {
+      // Sudah di sini — langsung cek NPC
+      this._showZoneNPCs(zoneId);
+      return;
+    }
+
+    const { error } = await supabase
+      .from('players')
+      .update({ current_zone: zoneId })
+      .eq('uid', State.user.id);
+
+    if (error) { UI.toast('Gagal pindah zona: ' + error.message, 'error'); return; }
+
+    State.player.current_zone = zoneId;
+    UI.updateTopBar();
+    this.render();
+    UI.toast(`Kamu memasuki: ${zone.name}`, 'info');
+    this._showZoneNPCs(zoneId);
+  },
+
+  _showZoneNPCs(zoneId) {
+    const npcsHere = NPCS[zoneId];
+    if (!npcsHere || npcsHere.length === 0) return;
+    setTimeout(() => {
+      UI.openNPC(npcsHere[0], zoneId);
+    }, 500);
+  },
+};
+
+// ══════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════
+window.Auth = {
+  async login() {
+    const email  = document.getElementById('login-email').value.trim();
+    const pass   = document.getElementById('login-password').value;
+    const errEl  = document.getElementById('login-error');
+    const btn    = document.getElementById('btn-login');
+
+    errEl.className = 'auth-error'; // hide
+    if (!email || !pass) { this._showErr(errEl, 'Email dan password harus diisi.'); return; }
+
+    btn.disabled    = true;
+    btn.textContent = 'Membuka gerbang...';
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password: pass });
+
+      if (error) {
+        let msg = error.message;
+        if (msg.includes('Invalid login credentials')) msg = 'Email atau password salah.';
+        else if (msg.includes('Email not confirmed'))  msg = 'Konfirmasi email dulu. Atau matikan "Confirm email" di Supabase Auth settings.';
+        this._showErr(errEl, msg);
+        return;
+      }
+
+      // Sukses login, load game
+      await initGame(data.user);
+
+    } catch (err) {
+      this._showErr(errEl, 'Terjadi kesalahan. Coba lagi.');
+      console.error('Login error:', err);
+    } finally {
+      btn.disabled    = false;
+      btn.textContent = 'Masuk ke Kastil';
+    }
+  },
+
+  async register() {
+    const email    = document.getElementById('reg-email').value.trim();
+    const pass     = document.getElementById('reg-password').value;
+    const username = document.getElementById('reg-username').value.trim();
+    const errEl    = document.getElementById('register-error');
+    const infoEl   = document.getElementById('register-info');
+    const btn      = document.getElementById('btn-register');
+
+    errEl.className = 'auth-error';
+    infoEl.className = 'auth-info';
+
+    // Validasi client-side
+    if (!email) { this._showErr(errEl, 'Email harus diisi.'); return; }
+    if (pass.length < 8) { this._showErr(errEl, 'Password minimal 8 karakter.'); return; }
+    if (!/^[a-zA-Z0-9_]{3,24}$/.test(username)) {
+      this._showErr(errEl, 'Username: 3-24 karakter, hanya huruf/angka/underscore.');
+      return;
+    }
+
+    btn.disabled    = true;
+    btn.textContent = 'Membuat karakter...';
+
+    try {
+      // Step 1: Daftarkan ke Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email,
+        password: pass,
+      });
+
+      if (authError) {
+        let msg = authError.message;
+        if (msg.includes('already registered') || msg.includes('already been registered')) {
+          msg = 'Email sudah terdaftar. Silakan login.';
+        } else if (msg.includes('rate limit')) {
+          msg = 'Terlalu banyak percobaan. Tunggu beberapa menit.';
+        }
+        this._showErr(errEl, msg);
+        return;
+      }
+
+      // Step 2: Supabase mungkin tidak langsung beri session jika email confirmation ON
+      // Kita tangani kedua kasus: langsung dapat user, atau user ada tapi belum confirmed
+      const uid = authData.user?.id;
+      if (!uid) {
+        this._showInfo(infoEl, 'Registrasi berhasil! Cek email untuk konfirmasi, lalu login. Atau matikan "Confirm email" di Supabase Auth settings.');
+        return;
+      }
+
+      // Step 3: Buat profil player di database
+      const { error: profileError } = await supabase.from('players').insert({
+        uid,
+        username,
+        display_name: username,
+        class:        State.selectedClass,
+        ov_rank:      State.selectedRank,
+        hp_current:   100,
+        hp_max:       100,
+        mp_current:   50,
+        mp_max:       50,
+        gold:         100,
+        crystals:     0,
+        level:        1,
+        exp:          0,
+        current_zone: 'castle_entrance',
+        gender:       'undefined',
+      });
+
+      if (profileError) {
+        // Jika username sudah dipakai
+        if (profileError.message.includes('unique') || profileError.message.includes('duplicate')) {
+          this._showErr(errEl, 'Username sudah dipakai. Pilih username lain.');
+        } else {
+          this._showErr(errEl, 'Gagal buat profil: ' + profileError.message);
+        }
+        // Sign out auth user karena profil gagal dibuat
+        await supabase.auth.signOut();
+        return;
+      }
+
+      // Step 4: Cek apakah sudah punya session (email confirmation off)
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        UI.toast('Selamat datang di kastil, ' + username + '!', 'success');
+        await initGame(session.user);
+      } else {
+        // Email confirmation ON — minta user cek email
+        this._showInfo(infoEl, '✓ Akun berhasil dibuat! Cek email untuk konfirmasi lalu login. Atau ke Supabase → Auth → Settings → matikan "Confirm email".');
+      }
+
+    } catch (err) {
+      this._showErr(errEl, 'Terjadi kesalahan. Lihat console.');
+      console.error('Register error:', err);
+    } finally {
+      btn.disabled    = false;
+      btn.textContent = 'Mulai Perjalanan';
+    }
+  },
+
+  async logout() {
+    if (State.realtimeChannel) {
+      await supabase.removeChannel(State.realtimeChannel);
+      State.realtimeChannel = null;
+    }
+    await supabase.auth.signOut();
+    State.user   = null;
+    State.player = null;
+    UI.showScreen('auth');
+    UI.toast('Kamu telah meninggalkan kastil.', 'info');
+  },
+
+  _showErr(el, msg)  { el.textContent = msg; el.className = 'auth-error show'; },
+  _showInfo(el, msg) { el.textContent = msg; el.className = 'auth-info show'; },
+};
+
+// ══════════════════════════════════════
+// PLAYER
+// ══════════════════════════════════════
+window.Player = {
+  async fetch() {
+    const { data, error } = await supabase
+      .from('players')
+      .select('*')
+      .eq('uid', State.user.id)
+      .single();
+
+    if (error) {
+      // PGRST116 = row not found
+      if (error.code === 'PGRST116') {
+        throw new Error('Profil pemain tidak ditemukan. Pastikan kamu sudah registrasi dengan benar.');
+      }
+      throw error;
+    }
+    State.player = data;
+    return data;
+  },
+
+  renderProfile() {
+    const p = State.player;
+    if (!p) return;
+    const initial = (p.display_name || p.username || '?')[0].toUpperCase();
+    document.getElementById('profile-avatar').textContent   = initial;
+    document.getElementById('profile-username').textContent  = p.username || '—';
+    document.getElementById('profile-class').textContent     = ((p.class || 'knight').toUpperCase()) + ' · ' + ((p.ov_rank || 'unranked').toUpperCase());
+    document.getElementById('prof-level').textContent        = p.level || 1;
+    document.getElementById('prof-exp').textContent          = ((p.exp || 0).toLocaleString()) + ' XP';
+    document.getElementById('prof-exp-fill').style.width     = Math.min(100, (((p.exp || 0) % 1000) / 1000) * 100) + '%';
+    document.getElementById('prof-gold').textContent         = (p.gold || 0).toLocaleString();
+    document.getElementById('prof-crystals').textContent     = (p.crystals || 0).toLocaleString();
+    document.getElementById('prof-zone').textContent         = (p.current_zone || '').replace(/_/g, ' ').toUpperCase();
+    document.getElementById('prof-uid').textContent          = p.uid || '—';
+    document.getElementById('edit-display').value            = p.display_name || '';
+    document.getElementById('edit-bio').value                = p.profile_bio || '';
+  },
+
+  async saveProfile() {
+    const display_name = document.getElementById('edit-display').value.trim();
+    const profile_bio  = document.getElementById('edit-bio').value.trim();
+
+    if (!display_name) { UI.toast('Display name tidak boleh kosong.', 'error'); return; }
+    if (display_name.length > 32) { UI.toast('Display name max 32 karakter.', 'error'); return; }
+
+    const { error } = await supabase
+      .from('players')
+      .update({ display_name, profile_bio })
+      .eq('uid', State.user.id);
+
+    if (error) { UI.toast('Gagal simpan: ' + error.message, 'error'); return; }
+
+    State.player.display_name = display_name;
+    State.player.profile_bio  = profile_bio;
+    UI.toast('Profil berhasil disimpan.', 'success');
+  },
+};
+
+// ══════════════════════════════════════
+// INVENTORY
+// ══════════════════════════════════════
+const ITEM_ICONS = {
+  weapon: '⚔', armor: '🛡', consumable: '⚗', quest_item: '📜',
+  key_item: '🗝', gift: '🌹', bond_token: '⛓', currency_pouch: '💰',
+};
+
+window.Inventory = {
+  async fetch() {
+    if (!State.user) return [];
+    const { data, error } = await supabase
+      .from('inventory')
+      .select(`
+        inv_id, quantity, is_equipped, is_locked, slot, acquired_at,
+        items_catalog (
+          item_id, name, description, item_type,
+          rarity, base_value, is_tradeable, stats_json, icon_key
+        )
+      `)
+      .eq('player_uid', State.user.id)
+      .order('acquired_at', { ascending: false });
+
+    if (error) { console.error('Inventory fetch error:', error); return []; }
+    State.inventory = data || [];
+    return State.inventory;
+  },
+
+  render() {
+    this.fetch().then(() => {
+      const grid = document.getElementById('inv-grid');
+      const countEl = document.getElementById('inv-count');
+      if (!grid) return;
+
+      countEl.textContent = `${State.inventory.length} item dalam kepemilikanmu`;
+
+      if (!State.inventory.length) {
+        grid.innerHTML = '<div class="inv-empty">Tasmu kosong. Jelajahi kastil untuk menemukan item.</div>';
+        return;
+      }
+
+      grid.innerHTML = State.inventory.map(item => {
+        const cat    = item.items_catalog || {};
+        const icon   = ITEM_ICONS[cat.item_type] || '◈';
+        const rarity = cat.rarity || 'common';
+        return `
+          <div class="inv-item ${item.is_equipped ? 'equipped' : ''}">
+            <div class="item-rarity-bar rarity-${rarity}"></div>
+            <div class="item-top">
+              <div class="item-icon">${icon}</div>
+              <div class="item-badges">
+                ${item.is_equipped  ? '<span class="item-badge badge-equipped">Equipped</span>' : ''}
+                ${item.is_locked    ? '<span class="item-badge badge-locked">Locked</span>'    : ''}
+                ${cat.is_tradeable  ? '<span class="item-badge badge-tradeable">Trade</span>'  : ''}
+              </div>
+            </div>
+            <div class="item-name">${cat.name || 'Unknown Item'}</div>
+            <div class="item-type">${rarity} ${cat.item_type || 'item'}</div>
+            <div class="item-qty">Qty: ${item.quantity} · Nilai: ${(cat.base_value || 0).toLocaleString()} gold</div>
+            <div class="item-actions">
+              <button class="item-btn" onclick="Inventory.toggleLock('${item.inv_id}', ${!item.is_locked})">
+                ${item.is_locked ? 'Unlock' : 'Lock'}
+              </button>
+              <button class="item-btn" onclick="Inventory.copyItemId('${cat.item_id || ''}')">Copy ID</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }).catch(err => {
+      console.error('Render inventory error:', err);
+      UI.toast('Gagal memuat inventory.', 'error');
+    });
+  },
+
+  async toggleLock(invId, lock) {
+    const { error } = await supabase
+      .from('inventory')
+      .update({ is_locked: lock })
+      .eq('inv_id', invId)
+      .eq('player_uid', State.user.id);
+
+    if (error) { UI.toast('Gagal: ' + error.message, 'error'); return; }
+    UI.toast(lock ? 'Item dikunci.' : 'Item dibuka kuncinya.', 'success');
+    this.render();
+  },
+
+  copyItemId(itemId) {
+    if (!itemId) { UI.toast('Item ID tidak tersedia.', 'error'); return; }
+    navigator.clipboard.writeText(itemId)
+      .then(() => UI.toast('Item ID disalin ke clipboard.', 'success'))
+      .catch(() => {
+        // Fallback jika clipboard API tidak tersedia
+        const tmp = document.createElement('textarea');
+        tmp.value = itemId;
+        document.body.appendChild(tmp);
+        tmp.select();
+        document.execCommand('copy');
+        document.body.removeChild(tmp);
+        UI.toast('Item ID disalin.', 'success');
+      });
+  },
+};
+
+// ══════════════════════════════════════
+// TRADE
+// ══════════════════════════════════════
+window.Trade = {
+  async send() {
+    const toUsername = document.getElementById('trade-to').value.trim();
+    const goldAmount = parseInt(document.getElementById('trade-gold').value) || 0;
+    const itemId     = document.getElementById('trade-item-id').value.trim() || null;
+    const qty        = parseInt(document.getElementById('trade-qty').value) || 1;
+    const btn        = document.getElementById('btn-trade-send');
+
+    // Validasi dasar
+    if (!toUsername) { UI.toast('Masukkan username penerima.', 'error'); return; }
+    if (goldAmount <= 0 && !itemId) { UI.toast('Masukkan jumlah gold atau Item ID.', 'error'); return; }
+    if (goldAmount < 0) { UI.toast('Jumlah gold tidak boleh negatif.', 'error'); return; }
+    if (itemId && qty <= 0) { UI.toast('Jumlah item minimal 1.', 'error'); return; }
+
+    // Cari UID penerima
+    const { data: recip, error: rErr } = await supabase
+      .from('players')
+      .select('uid, username, display_name')
+      .eq('username', toUsername)
+      .single();
+
+    if (rErr || !recip) { UI.toast(`Player "${toUsername}" tidak ditemukan.`, 'error'); return; }
+    if (recip.uid === State.user.id) { UI.toast('Tidak bisa trade ke diri sendiri.', 'error'); return; }
+
+    btn.disabled    = true;
+    btn.textContent = 'Mengirim...';
+
+    const idempotencyKey = crypto.randomUUID();
+
+    const { data, error } = await supabase.rpc('transfer_items', {
+      p_from_uid:        State.user.id,
+      p_to_uid:          recip.uid,
+      p_item_id:         itemId,
+      p_quantity:        itemId ? qty : 0,
+      p_gold_amount:     goldAmount,
+      p_reason:          'trade',
+      p_idempotency_key: idempotencyKey,
+    });
+
+    btn.disabled    = false;
+    btn.textContent = 'Kirim ⇒';
+
+    if (error) { UI.toast('Transfer gagal: ' + error.message, 'error'); return; }
+    if (data?.status === 'error') { UI.toast('Transfer gagal: ' + data.message, 'error'); return; }
+    if (data?.status === 'duplicate') { UI.toast('Transaksi sudah diproses sebelumnya.', 'info'); return; }
+
+    UI.toast(`Berhasil mengirim ke ${recip.display_name || toUsername}.`, 'success');
+    document.getElementById('trade-gold').value   = '';
+    document.getElementById('trade-item-id').value = '';
+
+    // Update gold lokal tanpa reload penuh
+    if (State.player && goldAmount > 0) {
+      State.player.gold = Math.max(0, State.player.gold - goldAmount);
+      UI.updateTopBar();
+    }
+
+    this.loadHistory();
+  },
+
+  async loadHistory() {
+    if (!State.user) return;
+    const { data, error } = await supabase
+      .from('transactions')
+      .select('*')
+      .or(`from_uid.eq.${State.user.id},to_uid.eq.${State.user.id}`)
+      .order('initiated_at', { ascending: false })
+      .limit(25);
+
+    const el = document.getElementById('trade-history');
+    if (!el) return;
+
+    if (error || !data?.length) {
+      el.innerHTML = '<div style="font-family:var(--font-body);font-style:italic;color:var(--dust);padding:20px 0">Belum ada transaksi...</div>';
+      return;
+    }
+
+    el.innerHTML = data.map(tx => {
+      const isOut = tx.from_uid === State.user.id;
+      const dir   = isOut ? '⇒ Dikirim' : '⇐ Diterima';
+      const date  = new Date(tx.initiated_at).toLocaleDateString('id-ID');
+      let desc    = tx.reason || 'trade';
+      if (tx.gold_amount > 0) desc += ` · ${tx.gold_amount.toLocaleString()} gold`;
+      if (tx.item_qty    > 0) desc += ` · ${tx.item_qty}x item`;
+      return `
+        <div class="trade-history-item">
+          <div>
+            <div class="th-info">${dir} · ${desc}</div>
+            <div class="th-meta">${date}</div>
+          </div>
+          <div class="th-status status-${tx.status}">${tx.status.toUpperCase()}</div>
+        </div>
+      `;
+    }).join('');
+  },
+};
+
+// ══════════════════════════════════════
+// QUESTS
+// ══════════════════════════════════════
+window.Quests = {
+  async fetch() {
+    if (!State.user) return [];
+    const { data } = await supabase
+      .from('quests')
+      .select('*')
+      .eq('player_uid', State.user.id);
+    State.quests = data || [];
+    return State.quests;
+  },
+
+  render() {
+    this.fetch().then(() => {
+      const el = document.getElementById('quest-list');
+      if (!el) return;
+
+      el.innerHTML = QUEST_CATALOG.map(q => {
+        const prog     = State.quests.find(p => p.quest_key === q.key);
+        const status   = prog?.status || 'not_started';
+        const canClaim = status === 'completed' && prog && !prog.reward_claimed;
+
+        return `
+          <div class="quest-card ${status}">
+            <div class="quest-header">
+              <div class="quest-title">${q.title}</div>
+              <span class="quest-status-badge ${status}">${status.replace(/_/g, ' ').toUpperCase()}</span>
+            </div>
+            <div class="quest-desc">${q.desc}</div>
+            <div class="quest-progress">
+              ${q.steps.map((s, i) => {
+                const done = prog?.progress_json?.[String(i)] || 0;
+                return `<div class="quest-prog-item">${s.label}: <span>${done}/${s.target}</span></div>`;
+              }).join('')}
+            </div>
+            <div class="quest-reward">
+              <span class="quest-reward-label">Hadiah</span>
+              <span class="quest-reward-item">◈ ${q.rewards.gold.toLocaleString()} Gold</span>
+              <span class="quest-reward-item">✦ ${q.rewards.exp.toLocaleString()} XP</span>
+              ${status === 'not_started' ? `<button class="btn-claim" onclick="Quests.start('${q.key}')">Terima Quest</button>` : ''}
+              ${canClaim ? `<button class="btn-claim" onclick="Quests.claim('${q.key}')">Klaim Hadiah ✦</button>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('') || '<div class="inv-empty">Bicara dengan NPC di kastil untuk mendapat quest.</div>';
+    });
+  },
+
+  async start(questKey) {
+    // Cek duplikasi di client dulu
+    if (State.quests.find(q => q.quest_key === questKey)) {
+      UI.toast('Quest ini sudah dimulai.', 'info');
+      return;
+    }
+
+    const { error } = await supabase.from('quests').insert({
+      player_uid:    State.user.id,
+      quest_key:     questKey,
+      status:        'in_progress',
+      started_at:    new Date().toISOString(),
+      progress_json: {},
+      reward_claimed: false,
+    });
+
+    if (error) {
+      if (error.message.includes('unique') || error.message.includes('duplicate')) {
+        UI.toast('Quest sudah ada di daftarmu.', 'info');
+      } else {
+        UI.toast('Gagal mulai quest: ' + error.message, 'error');
+      }
+      return;
+    }
+
+    UI.toast('Quest diterima! Cek progress kamu.', 'success');
+    this.render();
+  },
+
+  async claim(questKey) {
+    const q = QUEST_CATALOG.find(q => q.key === questKey);
+    if (!q) return;
+
+    const { data, error } = await supabase.rpc('award_quest_reward', {
+      p_player_uid: State.user.id,
+      p_quest_key:  questKey,
+      p_gold:       q.rewards.gold,
+      p_exp:        q.rewards.exp,
+      p_item_id:    null,
+      p_item_qty:   0,
+    });
+
+    if (error) { UI.toast('Klaim gagal: ' + error.message, 'error'); return; }
+    if (data?.status === 'error') { UI.toast('Klaim gagal: ' + data.message, 'error'); return; }
+
+    UI.toast('Hadiah quest diklaim! 🎉', 'success');
+    // Refresh player data untuk update gold & exp
+    await Player.fetch();
+    UI.updateTopBar();
+    this.render();
+  },
+};
+
+// ══════════════════════════════════════
+// SOCIAL BONDS
+// ══════════════════════════════════════
+const BOND_ICONS = {
+  mate: '💗', lover: '🔥', ally: '⚔', rival: '⚡',
+  sworn_enemy: '💀', friend: '✦', acquaintance: '◈', stranger: '·',
+};
+
+window.Bonds = {
+  async fetch() {
+    if (!State.user) return [];
+    const uid = State.user.id;
+    const { data, error } = await supabase
+      .from('social_bonds')
+      .select(`
+        *,
+        pa:players!social_bonds_player_a_fkey(uid, username, display_name, ov_rank),
+        pb:players!social_bonds_player_b_fkey(uid, username, display_name, ov_rank)
+      `)
+      .or(`player_a.eq.${uid},player_b.eq.${uid}`);
+
+    if (error) { console.error('Bonds fetch error:', error); return []; }
+    State.bonds = data || [];
+    return State.bonds;
+  },
+
+  render() {
+    this.fetch().then(() => {
+      const el = document.getElementById('bonds-list');
+      if (!el) return;
+
+      if (!State.bonds.length) {
+        el.innerHTML = '<div class="inv-empty" style="padding:40px">Kamu belum memiliki ikatan. Bicara dengan pemain lain di kastil.</div>';
+        return;
+      }
+
+      const uid = State.user.id;
+      el.innerHTML = State.bonds.map(b => {
+        const other      = b.player_a === uid ? b.pb : b.pa;
+        const name       = other?.display_name || other?.username || 'Unknown Soul';
+        const rank       = (other?.ov_rank || 'unranked').toUpperCase();
+        const icon       = BOND_ICONS[b.bond_type] || '◈';
+        const affinityPct = Math.max(0, ((b.affinity + 100) / 200) * 100);
+        const affClass   = b.affinity >= 0 ? 'affinity-positive' : 'affinity-negative';
+        const bondClass  = 'bond-' + b.bond_type.replace('sworn_enemy', 'enemy');
+
+        return `
+          <div class="bond-card">
+            <div class="bond-avatar">${name[0].toUpperCase()}</div>
+            <div class="bond-info">
+              <div class="bond-name">${name}</div>
+              <div class="bond-type ${bondClass}">${icon} ${b.bond_type.replace(/_/g, ' ').toUpperCase()} · ${rank}</div>
+            </div>
+            <div>
+              <div style="font-family:var(--font-ui);font-size:10px;color:var(--dust);margin-bottom:4px">
+                Affinitas ${b.affinity > 0 ? '+' : ''}${b.affinity}
+              </div>
+              <div class="bond-affinity-bar">
+                <div class="bond-affinity-fill ${affClass}" style="width:${affinityPct}%"></div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    });
+  },
+};
+
+// ══════════════════════════════════════
+// REALTIME
+// ══════════════════════════════════════
+function initRealtime() {
+  if (!State.player || !State.user) return;
+
+  // Bersihkan channel lama jika ada
+  if (State.realtimeChannel) {
+    supabase.removeChannel(State.realtimeChannel);
+  }
+
+  const zone = State.player.current_zone || 'castle_entrance';
+
+  State.realtimeChannel = supabase
+    .channel(`zone:${zone}:${Date.now()}`)
+    // Listen perubahan data player sendiri dari DB (real-time gold update, dll)
+    .on('postgres_changes', {
+      event:  'UPDATE',
+      schema: 'public',
+      table:  'players',
+      filter: `uid=eq.${State.user.id}`,
+    }, ({ new: updated }) => {
+      State.player = { ...State.player, ...updated };
+      UI.updateTopBar();
+    })
+    // Broadcast presence ke zona ini
+    .on('broadcast', { event: 'player_entered' }, ({ payload }) => {
+      if (payload?.username && payload.username !== State.player?.username) {
+        UI.toast(`${payload.username} memasuki kastil.`, 'info');
+      }
+    })
+    .subscribe((status) => {
+      if (status === 'SUBSCRIBED') {
+        // Broadcast kehadiran kita
+        State.realtimeChannel.send({
+          type:    'broadcast',
+          event:   'player_entered',
+          payload: {
+            username: State.player?.username,
+            class:    State.player?.class,
+            zone,
+          },
+        }).catch(() => {}); // ignore broadcast errors
+      }
+    });
+}
+
+// ══════════════════════════════════════
+// INIT GAME (dipanggil setelah login sukses)
+// ══════════════════════════════════════
+async function initGame(user) {
+  State.user = user;
+  UI.showScreen('loading');
+
+  try {
+    UI.setLoading(15, 'Mengikat jiwamu ke kastil...');
+    await Player.fetch();
+
+    UI.setLoading(40, 'Memetakan kastil...');
+    await Inventory.fetch();
+
+    UI.setLoading(65, 'Membaca bintang...');
+    // Fetch quests di background (tidak blocking)
+
+    UI.setLoading(85, 'Membangunkan penjaga...');
+    initRealtime();
+
+    UI.setLoading(100, 'Selamat datang...');
+    UI.updateTopBar();
+
+    setTimeout(() => {
+      UI.showScreen('game');
+      World.render();
+      UI.toast(`Selamat datang kembali, ${State.player.display_name || State.player.username}. ⚔`, 'success');
+    }, 500);
+
+  } catch (err) {
+    console.error('Init game error:', err);
+    UI.toast('Gagal memuat: ' + err.message, 'error');
+    // Kembali ke auth
+    setTimeout(() => UI.showScreen('auth'), 1500);
+  }
+}
+
+// ══════════════════════════════════════
+// BOOTSTRAP
+// ══════════════════════════════════════
+async function bootstrap() {
+  UI.showScreen('loading');
+  UI.setLoading(5, 'Membangunkan kastil...');
+
+  try {
+    // Cek session yang sudah ada
+    const { data: { session }, error } = await supabase.auth.getSession();
+
+    if (error) {
+      console.error('Session error:', error);
+      UI.showScreen('auth');
+      return;
+    }
+
+    if (session?.user) {
+      await initGame(session.user);
+    } else {
+      UI.showScreen('auth');
+    }
+
+    // Dengarkan perubahan auth state
+    supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_OUT') {
+        State.user   = null;
+        State.player = null;
+        UI.showScreen('auth');
+      }
+      // TOKEN_REFRESHED: tidak perlu lakukan apa-apa, supabase handle otomatis
+    });
+
+  } catch (err) {
+    console.error('Bootstrap error:', err);
+    UI.showScreen('auth');
+  }
+}
+
+bootstrap();
+</script>
+</body>
+</html>
